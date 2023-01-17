@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>&lt;sf-user-auth> Demo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google fonts integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/lit/polyfill-support.js"></script>
+    <script type="module">
+        import {SfNav} from 'https://unpkg.com/sf-nav/sf-nav.js?module';
+    </script>
+    <script type="module" src="../sf-user-auth.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <style>
+      
+      body {
+        background-color: #efefef;
+        margin: 0px;
+        font-family: 'Source Sans Pro';
+      }
+
+      .cContainer {
+        margin: 20px;
+        padding: 20px;
+        border: dashed 1px gray;
+        background-color: white;
+      }
+
+      sf-nav:not(:defined) {
+        display: none;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <sf-nav>
+      <!-- Set the brand name -->
+      <h2 slot="brandName"><a href="#home" >Superflows</a></h2>
+      <!-- Set the brand logo -->
+      <a slot="brandImage" href="#home" ><img alt="logo" src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_white_transparent_200.png" /></a>
+      <!-- Set the main menu -->
+      <ul slot="mainMenu">
+        <li><a href="#about">About</a></li>
+        <li class="li-solutions">
+          <a href="javascript:void(0);" class="a-solutions">Solutions</a>
+          <ul>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#products">Products</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="javascript:void(0);">Contact Us</a>
+          <ul>
+            <li><a href="https://instagram.com">Instagram</a></li>
+            <li><a href="https://facebook.com">Facebook</a></li>
+            <li><a href="https://youtube.com">YouTube</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- Set the social media links -->
+      <ul slot="socialMedia">
+        <li><a href="https://facebook.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/facebook-black_round.png" /></a></li>
+        <li><a href="https://twitter.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/twitter_black_round.png" /></a></li>
+        <li><a href="https://youtube.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/youtube_black_round.png" /></a></li>
+      </ul>
+      <!-- Set CTA -->
+      <a slot="cta" href="#auth">Sign In</a>
+      <!-- Set copyright notice -->
+      <p slot="copyright">Copyright 2023 Superflows</p>
+      <!-- Profile picture -->
+      <img alt="profile" slot="profilePicture" src="https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg" />
+      <!-- Page Content -->
+      <div slot="content"></div>
+    </sf-nav>
+
+    <script>
+      var routeMap = [];
+    </script>
+    <script>
+      function getCurrentPathName() {
+        return window.location.hash.length === 0 ? '' : window.location.hash.split("/")[0].replace('#', '');
+      }
+      function getCurrentArgs() {
+        return routeMap[getCurrentPathName() + '.html'];
+      }
+    </script>
+    <script>
+      document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) => {console.log('hurray ' + JSON.stringify(e.detail));})
+      document.getElementsByTagName('sf-nav')[0].addEventListener('routeChange', (e) => {
+        routeMap[e.detail.pathName] = e.detail.args;
+      })
+    </script>
+  </body>
+</html>
