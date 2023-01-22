@@ -2,6 +2,8 @@ dev
 coverage
 src
 node_modules
+aws_proc
+aws
 test
 .babelrc
 rollup.config.js
