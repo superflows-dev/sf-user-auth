@@ -30,3 +30,4 @@ npm-debug.log
 #others
 config.gypi
 package-lock.json
+aws/*.zip

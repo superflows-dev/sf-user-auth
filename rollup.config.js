@@ -8,6 +8,8 @@ import summary from 'rollup-plugin-summary';
 import {terser} from 'rollup-plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
+import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
   input: 'sf-user-auth.js',
@@ -22,7 +24,19 @@ export default {
   },
   plugins: [
     replace({'Reflect.decorate': 'undefined'}),
-    resolve(),
+    resolve({browser: true}),
+    json(),
+    url({      // <-- and this
+      limit: 0,
+      include: [
+          /.*cldr\/.*\.json/,
+          /.*sap.ui.core.*\/SAP-icons.*/,
+          /\.properties$/,
+      ],
+      emitFiles: true,
+      fileName: "[name].[hash][extname]",
+    }),    
+    commonjs(),
     terser({
       ecma: 2017,
       module: true,

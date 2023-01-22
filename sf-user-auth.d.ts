@@ -16,8 +16,7 @@ export declare class SfUserAuth extends LitElement {
     onArgs: () => never[];
     _SfUserAuthEmail: any;
     _SfUserAuthPassword: any;
-    _SfUserAuthSlottedCta: any;
-    onFormSubmit(): boolean;
+    onFormSubmit: () => Promise<boolean>;
     decorateSlots: () => void;
     copySlots: () => void;
     initListeners: () => void;

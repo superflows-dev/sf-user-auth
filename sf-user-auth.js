@@ -10,7 +10,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { LitElement, html, css } from 'lit';
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
+import { Auth } from 'aws-amplify';
 /**
  * SfUserAuth element.
  *
@@ -22,16 +23,29 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     constructor() {
         super();
         this.onArgs = () => { return []; };
+        this.onFormSubmit = async () => {
+            try {
+                const { user } = await Auth.signUp({
+                    username: "hrushi m",
+                    password: "123123qqwe",
+                    attributes: {},
+                    autoSignIn: {
+                        enabled: true,
+                    }
+                });
+                console.log(user);
+            }
+            catch (error) {
+                console.log('error signing up:', error);
+            }
+            return false;
+        };
         this.decorateSlots = () => {
         };
         this.copySlots = () => {
         };
         this.initListeners = () => {
         };
-    }
-    onFormSubmit() {
-        console.log('submitted', this._SfUserAuthEmail);
-        return false;
     }
     firstUpdated(_changedProperties) {
         this.copySlots();
@@ -578,14 +592,11 @@ __decorate([
     property()
 ], SfUserAuth.prototype, "onArgs", void 0);
 __decorate([
-    query('h1')
+    query('#email')
 ], SfUserAuth.prototype, "_SfUserAuthEmail", void 0);
 __decorate([
     query('#password')
 ], SfUserAuth.prototype, "_SfUserAuthPassword", void 0);
-__decorate([
-    queryAssignedElements({ slot: 'cta' })
-], SfUserAuth.prototype, "_SfUserAuthSlottedCta", void 0);
 SfUserAuth = __decorate([
     customElement('sf-user-auth')
 ], SfUserAuth);

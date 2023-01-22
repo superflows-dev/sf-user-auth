@@ -5,8 +5,8 @@
  */
 
 import {LitElement, html, css, PropertyValueMap} from 'lit';
-import {customElement, property, query, queryAssignedElements} from 'lit/decorators.js';
-
+import {customElement, property, query} from 'lit/decorators.js';
+import { Auth } from 'aws-amplify';
 
 /**
  * SfUserAuth element.
@@ -17,8 +17,6 @@ import {customElement, property, query, queryAssignedElements} from 'lit/decorat
  */
 @customElement('sf-user-auth')
 export class SfUserAuth extends LitElement {
-
-
 
   static override styles = css`
     
@@ -535,18 +533,30 @@ export class SfUserAuth extends LitElement {
   @property()
   onArgs = () => {return []};
 
-  @query('h1')
+  @query('#email')
   _SfUserAuthEmail: any;
 
   @query('#password')
   _SfUserAuthPassword: any;
 
-  @queryAssignedElements({slot: 'cta'})
-  _SfUserAuthSlottedCta: any;
   
-  onFormSubmit() {
+  onFormSubmit = async () => {
 
-    console.log('submitted', this._SfUserAuthEmail);
+    try {
+      const { user } = await Auth.signUp({
+          username: "hrushi m",
+          password: "123123qqwe",
+          attributes: {
+        },
+        autoSignIn: { // optional - enables auto sign in after user is confirmed
+          enabled: true,
+        }
+      });
+      console.log(user);
+    } catch (error) {
+      console.log('error signing up:', error);
+    }
+
     return false;
 
   }
