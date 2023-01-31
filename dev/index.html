@@ -15,7 +15,7 @@
     <script type="module">
         import {SfNav} from 'https://unpkg.com/sf-nav/sf-nav.js?module';
     </script>
-    <script src="../sf-user-auth.js"></script>
+    <script type="module" src="../sf-user-auth.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -99,6 +99,12 @@
       document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) => {console.log('hurray ' + JSON.stringify(e.detail));})
       document.getElementsByTagName('sf-nav')[0].addEventListener('routeChange', (e) => {
         routeMap[e.detail.pathName] = e.detail.args;
+      })
+      document.getElementsByTagName('sf-nav')[0].addEventListener('accessTokenReceived', (e) => {
+        console.log('accessToken', e);
+      })
+      document.getElementsByTagName('sf-nav')[0].addEventListener('signedOut', (e) => {
+        console.log('signedOut', e);
       })
     </script>
   </body>
