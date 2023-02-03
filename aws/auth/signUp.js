@@ -45,18 +45,20 @@ export const processSignUp = async (event) => {
     
     if(resultGet.Item != null) {
     
-        return {statusCode: 409, body: {result: false, error: "Item already exists!"}}
+        return {statusCode: 409, body: {result: false, error: "Account already exists!"}}
 
     }
     
+    const now = new Date().getTime();
     const otp = generateOTP();
-    const expiry = new Date().getTime() + (24 * 60 * 60 * 1000)
+    const expiry = now + (24 * 60 * 60 * 1000)
     
     var setParams = {
         TableName: TABLE_NAME,
         Item: {
           'email' : {"S": email},
           'name' : {"S": name},
+          'otpTime' : {"S": now + ""},
           'otp' : {
             "L" : [
               {
@@ -109,7 +111,9 @@ export const processSignUp = async (event) => {
                 ReplyToAddresses: [],
               }));
           } catch (e) {
+            console.log(e);
             return e;
+            
           }
     }
     

@@ -13,6 +13,10 @@ export const processRefresh = async (event) => {
     
     var hAscii = '';
     
+    if((event["headers"]["Authorization"]) == null) {
+      return {statusCode: 400, body: { result: false, error: "Malformed headers!"}};
+    }
+    
     if((event["headers"]["Authorization"].split(" ")[1]) == null) {
       return {statusCode: 400, body: { result: false, error: "Malformed headers!"}};
     }
@@ -152,8 +156,8 @@ export const processRefresh = async (event) => {
     var newRefreshTokenArr = {};
     newRefreshTokenArr.L = [];
     
-    if(resultGet.Item.accessTokens != null) {
-      newAccessTokenArr.L = resultGet.Item.accessTokens.L;
+    if(resultGet.Item.refreshTokens != null) {
+      newRefreshTokenArr.L = resultGet.Item.refreshTokens.L;
     }
     
     newRefreshTokenArr.L.push({

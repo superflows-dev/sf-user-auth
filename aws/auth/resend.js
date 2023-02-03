@@ -2,8 +2,9 @@ import { PutItemCommand, GetItemCommand, UpdateItemCommand } from "@aws-sdk/clie
 import { SendEmailCommand } from "@aws-sdk/client-ses";
 import { ddbClient, TABLE_NAME, sesClient, FROM_EMAIL, PROJECT_NAME } from "./ddbClient.js";
 import { generateOTP } from './util.js';
+import {OTP_RESEND_DELAY} from './globals.js';
 
-export const processSignIn = async (event) => {
+export const processResend = async (event) => {
     
     var email = "";
     
@@ -40,13 +41,19 @@ export const processSignIn = async (event) => {
     
     if(resultGet.Item == null) {
     
-        return {statusCode: 404, body: {result: false, error: "Account does not exist!"}}
+      return {statusCode: 404, body: {result: false, error: "Account does not exist!"}}
 
     }
     
     const name = resultGet.Item.name.S;
-    
     const now = new Date().getTime();
+    const otpTime = parseInt(parseInt(resultGet.Item.otpTime.S));
+    
+    if((otpTime + OTP_RESEND_DELAY*1000) > now) {
+      return {statusCode: 401, body: {result: false, error: "The verification email should normally reach your inbox immediately. But in some cases it may take some more time. Please wait for a minute before attempting to resend."}}
+    }
+    
+    
     const otp = generateOTP();
     const expiry = now + (24 * 60 * 60 * 1000)
     
@@ -80,12 +87,9 @@ export const processSignIn = async (event) => {
           const data = await ddbClient.send(new UpdateItemCommand(updateParams));
           return data;
         } catch (err) {
-          console.log(err)
           return err;
         }
     };
-    
-    console.log(JSON.stringify(updateParams));
     
     var resultUpdate = await ddbUpdate();
     

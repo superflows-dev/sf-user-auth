@@ -21,6 +21,10 @@ import Util from './util';
  * @property apiId - AWS Api Gateway Id
  * @slot terms - Slot for holding terms & conditions content
  * @slot privacy - Slot for holding privacy policy content
+ * @csscustomproperty --auth-background-color - Background color of the component
+ * @csscustomproperty --auth-color - Text color of the component
+ * @csscustomproperty --button-background-color - Background color of the component
+ * @csscustomproperty --button-color - Text color of the component
  */
 let SfUserAuth = class SfUserAuth extends LitElement {
     constructor() {
@@ -239,6 +243,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     getUiSignIn() {
         return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+        <div class="SfUserAuthC">
         <h1>Sign In</h1>
         <h4>Hello again!</h4>
         <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
@@ -260,6 +265,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
           </div>
         </form>
+        </div>
       `;
     }
     render() {
@@ -269,7 +275,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         }
         else if (this.onArgs()[0] == 'signup') {
             return html `
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+        <div class="SfUserAuthC">
         <h1>Sign Up</h1>
         <h4>Let's create a new ${this.appName} account</h4>
         <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
@@ -304,21 +311,26 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <span>I already have an account. <a href="#auth/signin">Sign In</a></span>
           </div>
         </form>
+        </div>
       `;
         }
         else if (this.onArgs()[0] == 'terms') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+        <div class="SfUserAuthC">
         <div>
           <slot name="terms"></slot>
+        </div>
         </div>
       `;
         }
         else if (this.onArgs()[0] == 'privacy') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+        <div class="SfUserAuthC">
         <div>
           <slot name="privacy"></slot>
+        </div>
         </div>
       `;
         }
@@ -328,6 +340,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         else if (this.onArgs()[0] == 'verify') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+        <div class="SfUserAuthC">
         <h1>Verify</h1>
         <h4>Verification email with a one-time-password (OTP) has been sent to <strong>${this.onArgs()[1]}</strong></h4>
         <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
@@ -349,23 +362,28 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
           </div>
         </form>
+        </div>
       `;
         }
         else if (this.onArgs()[0] == 'refresh') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthC">
       <div class="refresh-container">
         <img .src=${this.logo} class="logo-refresh" />
         <div class="lds-dual-ring-lg"></div>
+      </div>
       </div>
     `;
         }
         else if (this.onArgs()[0] == 'signout') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthC">
       <div class="refresh-container">
         <img .src=${this.logo} class="logo-refresh" />
         <div class="lds-dual-ring-lg"></div>
+      </div>
       </div>
     `;
         }
@@ -377,12 +395,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
 SfUserAuth.styles = css `
     
     .SfUserAuthC {
-      background-color: var(--nav-background-color, #fff);
-      color: var(--nav-color, #000);
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background-color: var(--auth-background-color, none);
+      color: var(--auth-color, #000);
     }
 
     .error-client {
@@ -505,8 +519,13 @@ SfUserAuth.styles = css `
     }
 
     .link {
+      color: var(--auth-color, #000);
       text-decoration: underline;
       cursor: pointer;
+    }
+
+    a {
+      color: var(--auth-color, #000);
     }
 
     @keyframes lds-dual-ring {
@@ -533,6 +552,15 @@ SfUserAuth.styles = css `
     .logo-refresh {
       margin-bottom: 20px;
       width: 100px;
+    }
+
+    #submit {
+      background-color: var(--auth-button-background-color, #fff);
+      color: var(--auth-button-color, #000);
+    }
+
+    #submit:disabled {
+      opacity: 70%;
     }
 
     @media (orientation: landscape) {

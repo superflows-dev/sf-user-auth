@@ -93,35 +93,14 @@ export const processVerify = async (event) => {
     if(found) {
       
       //
-      // Generate a new access token
-      //
-      
-      var newAccessTokenArr = {};
-      newAccessTokenArr.L = [];
-      
-      if(resultGet.Item.accessTokens != null) {
-        newAccessTokenArr.L = resultGet.Item.accessTokens.L;
-      }
-      
-      const newAccessToken = generateToken();
-      const expiryAccessToken = new Date().getTime() + ACCESS_TOKEN_DURATION*(24 * 60 * 60 * 1000)
-      
-      newAccessTokenArr.L.push({
-        "M": {
-          "token" : {"S": newAccessToken },
-          "expiry" : {"S": expiryAccessToken + ""}
-        }
-      });
-      
-      //
       // Generate a new refresh token
       //
       
       var newRefreshTokenArr = {};
       newRefreshTokenArr.L = [];
       
-      if(resultGet.Item.accessTokens != null) {
-        newAccessTokenArr.L = resultGet.Item.accessTokens.L;
+      if(resultGet.Item.refreshTokens != null) {
+        newRefreshTokenArr.L = resultGet.Item.refreshTokens.L;
       }
       
       const newRefreshToken = generateToken();
@@ -143,10 +122,10 @@ export const processVerify = async (event) => {
         Key: {
           email: { S: email },
         },
-        UpdateExpression: "set otp = :otp1, accessTokens = :tokens1, refreshTokens = :tokens2",
+        UpdateExpression: "set otp = :otp1, refreshTokens = :tokens2",
         ExpressionAttributeValues: {
             ":otp1": newOtpArr,
-            ":tokens1": newAccessTokenArr,
+
             ":tokens2": newRefreshTokenArr
         }
       };
@@ -162,7 +141,7 @@ export const processVerify = async (event) => {
       
       var resultUpdate = await ddbUpdate();
       
-      return {statusCode: 200, body: {result: true, data: {accessToken: {token: newAccessToken, expiry: expiryAccessToken}, refreshToken: {token: newRefreshToken, expiry: expiryRefreshToken}}}};
+      return {statusCode: 200, body: {result: true, data: {refreshToken: {token: newRefreshToken, expiry: expiryRefreshToken}}}};
 
     } else {
       

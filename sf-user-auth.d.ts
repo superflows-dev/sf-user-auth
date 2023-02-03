@@ -13,6 +13,10 @@ import { LitElement, PropertyValueMap } from 'lit';
  * @property apiId - AWS Api Gateway Id
  * @slot terms - Slot for holding terms & conditions content
  * @slot privacy - Slot for holding privacy policy content
+ * @csscustomproperty --auth-background-color - Background color of the component
+ * @csscustomproperty --auth-color - Text color of the component
+ * @csscustomproperty --button-background-color - Background color of the component
+ * @csscustomproperty --button-color - Text color of the component
  */
 export declare class SfUserAuth extends LitElement {
     eventAccessTokenReceived: string;

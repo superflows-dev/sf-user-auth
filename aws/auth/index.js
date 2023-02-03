@@ -3,19 +3,27 @@ import { processSignIn } from './signIn.js'
 import { processVerify } from './verify.js'
 import { processValidate } from './validate.js'
 import { processRefresh } from './refresh.js'
+import { processResend } from './resend.js'
+import { origin } from "./ddbClient.js";
 
 export const handler = async (event, context, callback) => {
     
     const response = {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin" : "*",
+        "Access-Control-Allow-Origin" : origin,
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "Authorization, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers, Access-Control-Allow-Credentials, Content-Type, isBase64Encoded, x-requested-with",
         "Access-Control-Allow-Credentials" : true,
-        "Access-Control-Allow-Methods": "POST",
         'Content-Type': 'application/json',
         "isBase64Encoded": false
       },
     };
+    
+    if(event["httpMethod"] == "OPTIONS") {
+      callback(null, response);
+      return;
+    }
     
     switch(event["path"]) {
       
@@ -35,9 +43,6 @@ export const handler = async (event, context, callback) => {
         const resultVerify = await processVerify(event);
         response.body = JSON.stringify(resultVerify.body);
         response.statusCode = resultVerify.statusCode;
-        if(resultVerify.statusCode === 200) {
-          response.headers["Set-Cookie"] = "refreshToken=" + resultVerify.body.data.refreshToken.token + " expires=" + new Date(parseInt(resultVerify.body.data.refreshToken.expiry)).toUTCString(); 
-        }
         break;
         
       case "/validate":
@@ -50,9 +55,15 @@ export const handler = async (event, context, callback) => {
         const resultRefresh = await processRefresh(event);
         response.body = JSON.stringify(resultRefresh.body);
         response.statusCode = resultRefresh.statusCode;
-        if(resultVerify.statusCode === 200) {
-          response.headers["Set-Cookie"] = "refreshToken=" + resultVerify.body.data.refreshToken.token + " expires=" + new Date(parseInt(resultVerify.body.data.refreshToken.expiry)).toUTCString(); 
+        if(resultRefresh.statusCode === 200) {
+          response.headers["Set-Cookie"] = "refreshToken=" + resultRefresh.body.data.refreshToken.token + " expires=" + new Date(parseInt(resultRefresh.body.data.refreshToken.expiry)).toUTCString(); 
         }
+        break;
+        
+      case "/resend":
+        const resultResend = await processResend(event);
+        response.body = JSON.stringify(resultResend.body);
+        response.statusCode = resultResend.statusCode;
         break;
         
       default:
@@ -61,6 +72,8 @@ export const handler = async (event, context, callback) => {
       
       
     }
+    
+    // response.body = JSON.stringify(event);
     
     callback(null, response);
     

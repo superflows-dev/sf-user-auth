@@ -13,6 +13,11 @@ export const processValidate = async (event) => {
     
     var hAscii = '';
     
+    if((event["headers"]["Authorization"]) == null) {
+      return {statusCode: 400, body: { result: false, error: "Malformed headers!"}};
+    }
+    
+    
     if((event["headers"]["Authorization"].split(" ")[1]) == null) {
       return {statusCode: 400, body: { result: false, error: "Malformed headers!"}};
     }
