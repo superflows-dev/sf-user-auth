@@ -76,99 +76,65 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this._SfUserAuthDivRowSuccess.style.display = 'flex';
             this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
         };
-        this.prepareXhr = (data, url, cb, loaderElement, authorization) => {
+        this.prepareXhr = async (data, url, loaderElement, authorization) => {
             console.log('sending data', data);
-            const jsonData = JSON.stringify(data);
-            var xhr = new XMLHttpRequest();
-            xhr.addEventListener("readystatechange", cb);
-            xhr.open("POST", url);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            if (authorization != null) {
-                xhr.setRequestHeader('Authorization', 'Basic ' + authorization);
-            }
-            xhr.send(jsonData);
             if (loaderElement != null) {
                 loaderElement.innerHTML = '<div class="lds-dual-ring"></div>';
             }
-            return xhr;
+            return await Util.callApi(url, data, authorization);
         };
-        this.onResendSubmit = () => {
+        this.onResendSubmit = async () => {
             console.log('onresend');
             this.clearMessages();
-            var xhr = null;
-            xhr = this.prepareXhr({ "email": this.onArgs()[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", () => {
-                this._SfUserAuthLoader.innerHTML = '';
-                if (xhr != null) {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status == 200) {
-                            this.setSuccess('Verification email sent again successfully!');
-                        }
-                        else {
-                            const jsonRespose = JSON.parse(xhr.responseText);
-                            this.setError(jsonRespose.error);
-                        }
-                    }
-                }
-            }, this._SfUserAuthLoader, null);
+            const xhr = (await this.prepareXhr({ "email": this.onArgs()[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null));
+            this._SfUserAuthLoader.innerHTML = '';
+            if (xhr.status == 200) {
+                this.setSuccess('Verification email sent again successfully!');
+            }
+            else {
+                const jsonRespose = JSON.parse(xhr.responseText);
+                this.setError(jsonRespose.error);
+            }
         };
-        this.onFormSubmit = () => {
+        this.onFormSubmit = async () => {
             this.clearMessages();
             if (this.onArgs()[0] == 'signup') {
-                var xhr = null;
-                xhr = this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signup", () => {
-                    this._SfUserAuthLoader.innerHTML = '';
-                    if (xhr != null) {
-                        if (xhr.readyState === 4) {
-                            if (xhr.status == 200) {
-                                window.location.hash = '#auth/verify/' + this.email;
-                            }
-                            else {
-                                const jsonRespose = JSON.parse(xhr.responseText);
-                                this.setError(jsonRespose.error);
-                            }
-                        }
-                    }
-                }, this._SfUserAuthLoader, null);
+                const xhr = (await this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signup", this._SfUserAuthLoader, null));
+                this._SfUserAuthLoader.innerHTML = '';
+                if (xhr.status == 200) {
+                    window.location.hash = '#auth/verify/' + this.email;
+                }
+                else {
+                    const jsonRespose = JSON.parse(xhr.responseText);
+                    this.setError(jsonRespose.error);
+                }
             }
             else if (this.onArgs()[0] == 'signin') {
-                var xhr = null;
-                xhr = this.prepareXhr({ "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signin", () => {
-                    this._SfUserAuthLoader.innerHTML = '';
-                    if (xhr != null) {
-                        if (xhr.readyState === 4) {
-                            if (xhr.status == 200) {
-                                window.location.hash = '#auth/verify/' + this.email;
-                            }
-                            else {
-                                const jsonRespose = JSON.parse(xhr.responseText);
-                                this.setError(jsonRespose.error);
-                            }
-                        }
-                    }
-                }, this._SfUserAuthLoader, null);
+                const xhr = (await this.prepareXhr({ "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signin", this._SfUserAuthLoader, null));
+                this._SfUserAuthLoader.innerHTML = '';
+                if (xhr.status == 200) {
+                    window.location.hash = '#auth/verify/' + this.email;
+                }
+                else {
+                    const jsonRespose = JSON.parse(xhr.responseText);
+                    this.setError(jsonRespose.error);
+                }
             }
             else if (this.onArgs()[0] == 'verify') {
-                var xhr = null;
-                xhr = this.prepareXhr({ "email": this.onArgs()[1], "otp": this.otp }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/verify", () => {
-                    this._SfUserAuthLoader.innerHTML = '';
-                    if (xhr != null) {
-                        if (xhr.readyState === 4) {
-                            if (xhr.status == 200) {
-                                this.setSuccess('Verification successful!');
-                                const jsonRespose = JSON.parse(xhr.responseText);
-                                const refreshToken = jsonRespose.data.refreshToken.token;
-                                Util.writeCookie('refreshToken', refreshToken);
-                                console.log(refreshToken);
-                                window.location.hash = '#auth/refresh/' + this.onArgs()[1];
-                            }
-                            else {
-                                const jsonRespose = JSON.parse(xhr.responseText);
-                                this.setError(jsonRespose.error);
-                            }
-                        }
-                    }
-                }, this._SfUserAuthLoader, null);
+                const xhr = (await this.prepareXhr({ "email": this.onArgs()[1], "otp": this.otp }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/verify", this._SfUserAuthLoader, null));
+                this._SfUserAuthLoader.innerHTML = '';
+                if (xhr.status == 200) {
+                    this.setSuccess('Verification successful!');
+                    const jsonRespose = JSON.parse(xhr.responseText);
+                    const refreshToken = jsonRespose.refreshToken.token;
+                    Util.writeCookie('refreshToken', refreshToken);
+                    window.location.hash = '#auth/refresh/' + this.onArgs()[1];
+                    console.log('new hash', window.location.hash);
+                }
+                else {
+                    const jsonRespose = JSON.parse(xhr.responseText);
+                    this.setError(jsonRespose.error);
+                }
             }
             return false;
         };
@@ -198,14 +164,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
             }
         };
-        this.onCheckedChange = (location) => {
-            switch (location) {
-                case 'terms':
-                    break;
-                case 'comm':
-                    break;
-                default:
-            }
+        this.onCheckedChange = () => {
             this.evalSubmit();
         };
         this.onKeyUp = (location) => {
@@ -248,26 +207,20 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.initListeners = () => {
         };
-        this.initServices = () => {
+        this.initServices = async () => {
             if (this.onArgs()[0] == 'refresh') {
                 if (this.onArgs()[1] != null) {
-                    var xhr = null;
                     const authorization = btoa(this.onArgs()[1] + ":" + Util.readCookie('refreshToken'));
-                    xhr = this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", () => {
-                        if (xhr != null) {
-                            if (xhr.readyState === 4) {
-                                if (xhr.status == 200) {
-                                    const jsonRespose = JSON.parse(xhr.responseText);
-                                    Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-                                    const event = new CustomEvent(this.eventAccessTokenReceived, { detail: jsonRespose.data.accessToken, bubbles: true, composed: true });
-                                    this.dispatchEvent(event);
-                                }
-                                else {
-                                    this.signOut();
-                                }
-                            }
-                        }
-                    }, this._SfUserAuthLoader, authorization);
+                    const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
+                    if (xhr.status == 200) {
+                        const jsonRespose = JSON.parse(xhr.responseText);
+                        Util.writeCookie('refreshToken', jsonRespose.refreshToken.token);
+                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: jsonRespose.accessToken, bubbles: true, composed: true });
+                        this.dispatchEvent(event);
+                    }
+                    else {
+                        this.signOut();
+                    }
                 }
             }
             else if (this.onArgs()[0] == 'signout') {
@@ -279,25 +232,47 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.copySlots();
         this.decorateSlots();
         this.initListeners();
-        this.initServices();
     }
     connectedCallback() {
         super.connectedCallback();
     }
-    render() {
-        console.log('args', this.onArgs());
-        if (this.onArgs() == null || (this.onArgs().length === 1 && this.onArgs()[0] == "") || this.onArgs().length === 0) {
-            return html `
+    getUiSignIn() {
+        return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-        <h1>Hello Auth</h1>
+        <h1>Sign In</h1>
+        <h4>Hello again!</h4>
+        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+          <div class="div-row">
+            <label for="email">Email</label>
+            <input id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }}/>
+            <span id="error-client-email" class="error-client material-icons">priority_high</span>
+          </div>
+          <div class="div-row-error div-row-submit">
+            <div class="div-row-error-message"></div>
+          </div>
+          <div class="div-row-success div-row-submit">
+            <div class="div-row-success-message"></div>
+          </div>
+          <div class="div-row-submit">
+            <input id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
+          </div>
+          <div class="div-row-terms">
+            <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
+          </div>
+        </form>
       `;
+    }
+    render() {
+        this.initServices();
+        if (this.onArgs() == null || this.onArgs().length === 0) {
+            return this.getUiSignIn();
         }
         else if (this.onArgs()[0] == 'signup') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <h1>Sign Up</h1>
         <h4>Let's create a new ${this.appName} account</h4>
-        <form .onsubmit=${() => { return this.onFormSubmit(); }}>
+        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
           <div class="div-row">
             <label for="name">Name</label>
             <input id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
@@ -309,11 +284,11 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <span id="error-client-email" class="error-client material-icons">priority_high</span>
           </div>
           <div class="div-row-terms">
-            <input id="terms" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange('comm'); }}/>
+            <input id="terms" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
             <label for="terms">I would like to receive important email communication</label>
           </div>
           <div class="div-row-terms">
-            <input id="privacy" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange('terms'); }}/>
+            <input id="privacy" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
             <label for="privacy">I agree to the <a href="#auth/terms">terms</a> and <a href="#auth/privacy">privacy policy</a></label>
           </div>
           <div class="div-row-error div-row-submit">
@@ -348,37 +323,14 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       `;
         }
         else if (this.onArgs()[0] == 'signin') {
-            return html `
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-        <h1>Sign In</h1>
-        <h4>Hello again!</h4>
-        <form .onsubmit=${() => { return this.onFormSubmit(); }}>
-          <div class="div-row">
-            <label for="email">Email</label>
-            <input id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }}/>
-            <span id="error-client-email" class="error-client material-icons">priority_high</span>
-          </div>
-          <div class="div-row-error div-row-submit">
-            <div class="div-row-error-message"></div>
-          </div>
-          <div class="div-row-success div-row-submit">
-            <div class="div-row-success-message"></div>
-          </div>
-          <div class="div-row-submit">
-            <input id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
-          </div>
-          <div class="div-row-terms">
-            <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
-          </div>
-        </form>
-      `;
+            return this.getUiSignIn();
         }
         else if (this.onArgs()[0] == 'verify') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <h1>Verify</h1>
         <h4>Verification email with a one-time-password (OTP) has been sent to <strong>${this.onArgs()[1]}</strong></h4>
-        <form .onsubmit=${() => { return this.onFormSubmit(); }}>
+        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
           <div class="div-row">
             <label for="otp">OTP</label>
             <input id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX"/>
@@ -394,7 +346,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <input id="submit" type="submit" value="Verify" disabled><div class="loader-element"></div>
           </div>
           <div class="div-row-terms">
-            <span>I didn't receive the verification email. <span class="link" .onclick=${this.onResendSubmit}>Resend</span></span>
+            <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
           </div>
         </form>
       `;
@@ -418,10 +370,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     `;
         }
         else {
-            return html `
-      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <h1>This should not happen</h1>
-    `;
+            return this.getUiSignIn();
         }
     }
 };

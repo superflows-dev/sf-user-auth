@@ -19,8 +19,29 @@ function readCookie(key) {
     }
     return "";
 }
+async function callApi(url, data, authorization) {
+    return new Promise((resolve) => {
+        const jsonData = JSON.stringify(data);
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", () => {
+            if (xhr != null) {
+                if (xhr.readyState === 4) {
+                    resolve(xhr);
+                }
+            }
+        });
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        if (authorization != null) {
+            xhr.setRequestHeader('Authorization', 'Basic ' + authorization);
+        }
+        xhr.send(jsonData);
+        return xhr;
+    });
+}
 const exportFunctions = {
-    writeCookie, readCookie, clearCookie
+    writeCookie, readCookie, clearCookie, callApi
 };
 export default exportFunctions;
 //# sourceMappingURL=util.js.map

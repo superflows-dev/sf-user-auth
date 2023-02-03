@@ -24,7 +24,7 @@ export declare class SfUserAuth extends LitElement {
     email: string;
     name: string;
     otp: string;
-    onArgs: () => never[];
+    onArgs: () => string[];
     _SfUserAuthEmail: any;
     _SfUserAuthName: any;
     _SfUserAuthOtp: any;
@@ -48,19 +48,20 @@ export declare class SfUserAuth extends LitElement {
     clearMessages: () => void;
     setError: (msg: string) => void;
     setSuccess: (msg: string) => void;
-    prepareXhr: (data: any, url: string, cb: any, loaderElement: any, authorization: any) => XMLHttpRequest;
-    onResendSubmit: () => void;
-    onFormSubmit: () => boolean;
+    prepareXhr: (data: any, url: string, loaderElement: any, authorization: any) => Promise<unknown>;
+    onResendSubmit: () => Promise<void>;
+    onFormSubmit: () => Promise<boolean>;
     evalSubmit: () => void;
-    onCheckedChange: (location: string) => void;
+    onCheckedChange: () => void;
     onKeyUp: (location: string) => boolean;
     decorateSlots: () => void;
     copySlots: () => void;
     initListeners: () => void;
-    initServices: () => void;
+    initServices: () => Promise<void>;
     constructor();
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     connectedCallback(): void;
+    getUiSignIn(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }
 declare global {
