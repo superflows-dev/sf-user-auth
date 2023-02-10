@@ -31,6 +31,7 @@ export class SfUserAuth extends LitElement {
   static override styles = css`
     
     .SfUserAuthC {
+      padding: 20px;
       background-color: var(--auth-background-color, none);
       color: var(--auth-color, #000);
     }
@@ -537,6 +538,8 @@ export class SfUserAuth extends LitElement {
   }
 
   getUiSignIn() {
+
+    window.location.hash = '#auth/signin';
 
     return html`
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  

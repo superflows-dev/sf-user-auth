@@ -241,6 +241,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         super.connectedCallback();
     }
     getUiSignIn() {
+        window.location.hash = '#auth/signin';
         return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
@@ -395,6 +396,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
 SfUserAuth.styles = css `
     
     .SfUserAuthC {
+      padding: 20px;
       background-color: var(--auth-background-color, none);
       color: var(--auth-color, #000);
     }
