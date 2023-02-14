@@ -155,7 +155,7 @@ Browse to **http://localhost:8080/** for confirming that the web server is runni
 
 <br />
 
-### 1.7 Create dist/index.html
+### 1.7 - Create dist/index.html
 
 Create an index.html file in the dist folder and initialize it with the following code:
 
@@ -255,7 +255,7 @@ You will see that a bare-bones navigation component has loaded which only contai
 
 ## ⥣ Step 3 - Configure The Navigation Bar
 
-### 3.1 Setup Route Container
+### 3.1 - Setup Route Container
 
 Create a page content slot in the sf-nav block as shown below. This container sits between the header and footer and dynamically displays the page content as the user navigates across pages.
 
@@ -276,7 +276,7 @@ Create a page content slot in the sf-nav block as shown below. This container si
 
 <br />
 
-### 3.2 Setup Parameter Passing
+### 3.2 - Setup Parameter Passing
 
 To enable parameter pass-down during routing, include the following Javascript code block in the sf-nav block. This code block:
 
@@ -316,7 +316,7 @@ To enable parameter pass-down during routing, include the following Javascript c
 
 <br />
 
-### 3.3 Confirm That Routing Works
+### 3.3 - Confirm That Routing Works
 
 At this point, the routing configuration is complete.
 
@@ -333,7 +333,7 @@ You will observe the following:
 
 <br />
 
-### 3.4 Create dist/home.html
+### 3.4 - Create dist/home.html
 
 Create a new file dist/home.html with the below HTML:
 
@@ -375,7 +375,7 @@ This looks good for now. We can surmise now that routing is working normally. Le
 
 <br />
 
-### Step 3.5 - Setup Main Menu
+### 3.5 - Setup Main Menu
 
 SfNav supports two-level menus. Creating it is pretty straightforward. Create an unordered list as shown below and set it to the main menu slot. Some menu items point to internal links (links with hash) and some menu items point to external links (links with http(s)).
 
@@ -564,7 +564,7 @@ If you click on any menu items with internal links such as services, products, y
 
 <br />
 
-### Step 3.6 - Setup Social Media Links
+### 3.6 - Setup Social Media Links
 
 Social media links can be configured using an unordered list as well. Below is an example:
 
@@ -589,7 +589,7 @@ Social media links can be configured using an unordered list as well. Below is a
 
 <br />
 
-### Step 3.7 - Copyright Notice
+### 3.7 - Copyright Notice
 
 The copyright notice can be configured in the footer as follows:
 
@@ -610,7 +610,7 @@ The copyright notice will be displayed in the footer.
 
 <br />
 
-### Step 3.8 - Setup Call To Action Button
+### 3.8 - Setup Call To Action Button
 
 To initiate the authentication flow, we need a call to action button on the navigation bar. In SfNav, it can be configured as follows:
 
@@ -635,7 +635,7 @@ The call to action button will be displayed in the header.
 
 <br />
 
-### Step 3.9 - Handle Search
+### 3.9 - Handle Search
 
 Search functionality is available by default. Just subscribe to the searchClick event to capture the event when the user types something in the search box and presses Enter.
 
@@ -647,7 +647,7 @@ document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) =
 
 <br />
 
-### Step 3.10 - Review dist/index.html
+### 3.10 - Review dist/index.html
 
 After the modifications in the previous steps, the dist/index.html should look like the following:
 
@@ -1693,11 +1693,11 @@ Tests can be run with the `test` script.
 npm test
 ```
 
-- Chromium: |██████████████████████████████| 2/2 test files | 9 passed, 0 failed
-- Firefox:  |██████████████████████████████| 2/2 test files | 9 passed, 0 failed
-- Webkit:   |██████████████████████████████| 2/2 test files | 9 passed, 0 failed
-- Code coverage: 98.63 % (Overall) 100% (Main flow)
-- View full coverage report at coverage/lcov-report/index.html
+- Chromium: |██████████████████████████████| 11/11 test files | 32 passed, 0 failed
+- Firefox:  |██████████████████████████████| 11/11 test files | 32 passed, 0 failed
+- Webkit:   |██████████████████████████████| 11/11 test files | 32 passed, 0 failed
+
+Code coverage: 99 % (Overall) 100% (Main flow) 
 
 <br />
 
@@ -1717,9 +1717,13 @@ There is a development HTML file located at `/dev/index.html` that you can view 
 
 [Read](https://blog.superflows.dev/)
 
+<br />
+
 ## License
 
 MIT © [superflows-dev](https://github.com/superflows-dev)
+
+<br />
 
 ## Powered by 
 
