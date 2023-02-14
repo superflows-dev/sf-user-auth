@@ -106,10 +106,10 @@
         routeMap[e.detail.pathName] = e.detail.args;
       })
       document.getElementsByTagName('sf-nav')[0].addEventListener('accessTokenReceived', (e) => {
-        console.log('accessToken', e);
+        alert('Sign in successful: ' + JSON.stringify(e.detail));
       })
       document.getElementsByTagName('sf-nav')[0].addEventListener('signedOut', (e) => {
-        console.log('signedOut', e);
+        alert('Signed out: ' + JSON.stringify(e.detail));
       })
     </script>
   </body>

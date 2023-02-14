@@ -161,15 +161,17 @@ suite('sf-user-auth > Basic tests', () => {
         assert.instanceOf(el, SfUserAuth);
     });
 
-    test('nonw in render', async () => {
+    test('non in render', async () => {
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
         el.onArgs = getArgsNone;
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
-        const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
-        assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
+        // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
+        // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
+        const img = el.shadowRoot!.querySelectorAll('img')[0]!;
+        assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0); 
 
     });
 

@@ -65,6 +65,7 @@ export declare class SfUserAuth extends LitElement {
     constructor();
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     connectedCallback(): void;
+    getUiRefresh(): import("lit-html").TemplateResult<1>;
     getUiSignIn(): import("lit-html").TemplateResult<1>;
     render(): import("lit-html").TemplateResult<1>;
 }

@@ -148,13 +148,15 @@ suite('sf-user-auth > Basic tests', () => {
         const el = document.createElement('sf-user-auth');
         assert.instanceOf(el, SfUserAuth);
     });
-    test('nonw in render', async () => {
+    test('non in render', async () => {
         const el = (await fixture(htmlContent));
         await el.updateComplete;
         el.onArgs = getArgsNone;
         await new Promise((r) => setTimeout(r, TIMEOUT));
-        const h1 = el.shadowRoot.querySelectorAll('h1')[0];
-        assert.ok(h1.innerHTML.indexOf('Sign In') >= 0);
+        // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
+        // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
+        const img = el.shadowRoot.querySelectorAll('img')[0];
+        assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0);
     });
     test('sign in render', async () => {
         const el = (await fixture(htmlContent));

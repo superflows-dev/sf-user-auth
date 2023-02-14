@@ -36,7 +36,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             Util.clearCookie('refreshToken');
             const event = new CustomEvent(this.eventSignedOut, { detail: {}, bubbles: true, composed: true });
             this.dispatchEvent(event);
-            window.location.hash = '#auth/signin';
+            //window.location.hash = '#auth/signin';
         };
         this.validateTerms = () => {
             return this._SfUserAuthTerms.checked;
@@ -81,14 +81,12 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
         };
         this.prepareXhr = async (data, url, loaderElement, authorization) => {
-            console.log('sending data', data);
             if (loaderElement != null) {
                 loaderElement.innerHTML = '<div class="lds-dual-ring"></div>';
             }
             return await Util.callApi(url, data, authorization);
         };
         this.onResendSubmit = async () => {
-            console.log('onresend');
             this.clearMessages();
             const xhr = (await this.prepareXhr({ "email": this.onArgs()[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null));
             this._SfUserAuthLoader.innerHTML = '';
@@ -130,10 +128,11 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 if (xhr.status == 200) {
                     this.setSuccess('Verification successful!');
                     const jsonRespose = JSON.parse(xhr.responseText);
-                    const refreshToken = jsonRespose.refreshToken.token;
+                    const refreshToken = jsonRespose.data.refreshToken.token;
+                    const email = jsonRespose.data.email.S;
                     Util.writeCookie('refreshToken', refreshToken);
+                    Util.writeCookie('email', email);
                     window.location.hash = '#auth/refresh/' + this.onArgs()[1];
-                    console.log('new hash', window.location.hash);
                 }
                 else {
                     const jsonRespose = JSON.parse(xhr.responseText);
@@ -218,8 +217,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
                     if (xhr.status == 200) {
                         const jsonRespose = JSON.parse(xhr.responseText);
-                        Util.writeCookie('refreshToken', jsonRespose.refreshToken.token);
-                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: jsonRespose.accessToken, bubbles: true, composed: true });
+                        Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
+                        Util.writeCookie('email', jsonRespose.data.email.S);
+                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S }, bubbles: true, composed: true });
+                        console.log('sending event', event);
                         this.dispatchEvent(event);
                     }
                     else {
@@ -239,6 +240,18 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     }
     connectedCallback() {
         super.connectedCallback();
+    }
+    getUiRefresh() {
+        window.location.hash = '#auth/refresh/' + Util.readCookie('email');
+        return html `
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthC">
+      <div class="refresh-container">
+        <img .src=${this.logo} class="logo-refresh" />
+        <div class="lds-dual-ring-lg"></div>
+      </div>
+      </div>
+    `;
     }
     getUiSignIn() {
         window.location.hash = '#auth/signin';
@@ -272,7 +285,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     render() {
         this.initServices();
         if (this.onArgs() == null || this.onArgs().length === 0) {
-            return this.getUiSignIn();
+            return this.getUiRefresh();
         }
         else if (this.onArgs()[0] == 'signup') {
             return html `
@@ -367,15 +380,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       `;
         }
         else if (this.onArgs()[0] == 'refresh') {
-            return html `
-      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <div class="SfUserAuthC">
-      <div class="refresh-container">
-        <img .src=${this.logo} class="logo-refresh" />
-        <div class="lds-dual-ring-lg"></div>
-      </div>
-      </div>
-    `;
+            return this.getUiRefresh();
         }
         else if (this.onArgs()[0] == 'signout') {
             return html `
@@ -389,7 +394,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     `;
         }
         else {
-            return this.getUiSignIn();
+            return this.getUiRefresh();
         }
     }
 };

@@ -140,10 +140,9 @@ suite('sf-user-auth > Basic tests', () => {
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
         el.onArgs = getArgsRefresh;
-
+        
         await new Promise((r) => setTimeout(r, TIMEOUT));
-
-        assert.ok(window.location.hash.indexOf('signin') >= 0); 
+        assert.ok(window.location.hash.indexOf('signin') <= 0); 
 
     });
 

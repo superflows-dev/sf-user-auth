@@ -134,7 +134,7 @@ suite('sf-user-auth > Basic tests', () => {
     test('refresh tests', async () => {
 
         stub(Util, 'callApi').returns( new Promise((resolve) => {
-            resolve({status: 200, responseText: JSON.stringify({accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}})});
+            resolve({status: 200, responseText: JSON.stringify({result: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}}})});
         }));  
 
         const el = (await fixture(htmlContent)) as SfUserAuth;

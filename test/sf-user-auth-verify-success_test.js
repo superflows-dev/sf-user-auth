@@ -131,7 +131,7 @@ suite('sf-user-auth > Basic tests', () => {
     });
     test('verify tests', async () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
-            resolve({ status: 200, responseText: JSON.stringify({ refreshToken: { token: "asdasdasd", expiry: 2323434 } }) });
+            resolve({ status: 200, responseText: JSON.stringify({ result: true, data: { name: { S: 'abc@gmail.com' }, email: { S: 'abc@gmail.com' }, refreshToken: { token: "asdasdasd", expiry: 2323434 } } }) });
         }));
         stub(Util, 'writeCookie').returns();
         const el = (await fixture(htmlContent));
