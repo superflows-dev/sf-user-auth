@@ -22,6 +22,18 @@ import Util from './util';
  * @csscustomproperty --button-background-color - Background color of the component
  * @csscustomproperty --button-color - Text color of the component
  */
+
+
+interface bodyListUsers {
+  offset: string;
+  limit: string;
+  filterKey?: string;
+  filterString?: string;
+  sortKey?: string;
+  sortOrder?: string;
+}
+
+
 @customElement('sf-user-auth')
 export class SfUserAuth extends LitElement {
 
@@ -36,6 +48,24 @@ export class SfUserAuth extends LitElement {
       color: var(--auth-color, #000);
     }
 
+    .SfUserAuthCAdmin {
+      background-color: var(--auth-background-color, none);
+      color: var(--auth-color, #000);
+    }
+
+    .badge {
+      border: dashed 1px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 20px;
+    }
+
+    .no-records {
+      padding: 10px;
+    }
+
     .error-client {
       color: red;
       display: none;
@@ -44,12 +74,26 @@ export class SfUserAuth extends LitElement {
     .check-client {
       color: green;
     }
-    
+
+    #logs {
+      margin-right: 10px;
+    }
+   
+    .div-row-search {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .div-row {
       display: flex;
       align-items: center;
       margin-top: 10px;
     }
+
+    
 
     .div-row > label {
       width: 100px;
@@ -61,6 +105,21 @@ export class SfUserAuth extends LitElement {
 
     .div-row > span {
       margin-left: 5px;
+    }
+
+    .div-row-userdetails-checkbox {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .div-row-userdetails-checkbox > label {
+      width: 100px;
+    }
+
+    .div-row-userdetails-checkbox > input {
+      margin: 0px;
     }
 
     .div-row-terms{
@@ -76,7 +135,12 @@ export class SfUserAuth extends LitElement {
       margin-bottom: 20px;
     }
 
-    .div-row-submit > input {
+    .div-row-submit{
+      justify-content: space-between;
+    }
+
+
+    .div-row-submit input {
       font-size: 110%;
       font-weight: 800;
     }
@@ -103,6 +167,10 @@ export class SfUserAuth extends LitElement {
     .div-row-success {
       display: none;
       align-items:center;
+    }
+
+    .success-userdetails {
+      justify-content: center;
     }
 
     .div-row-success-message {
@@ -186,6 +254,131 @@ export class SfUserAuth extends LitElement {
       flex-direction: column;
     }
 
+    .stats-container {
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .actions-container {
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+
+    .stats-item {
+      margin: 10px;
+    }
+
+    .pages-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pages-item {
+      padding-left: 5px;
+      padding-right: 5px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .pages-item-current {
+      padding-left: 5px;
+      padding-right: 5px;
+      cursor: pointer;
+    }
+
+    .pages-label {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .stats-container div {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    .stats-container h1 {
+      margin-bottom: 0px;
+    }
+
+    .stats-container p {
+      margin-top: 0px;
+      font-size: 80%;
+    }
+
+    .table-container {
+      max-width: 100%;
+      overflow-x: auto;
+      border: solid 1px;
+    }
+
+    .table-container th {
+      border-bottom: solid 1px;
+      text-align: left;
+      padding: 5px;
+    }
+
+    .table-container td {
+      font-size: 90%;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .td-name {
+      min-width: 150px;
+    }
+
+    .td-email {
+      min-width: 200px;
+    }
+
+    .td-timestamp {
+      min-width: 400px;
+    }
+
+    .td-status {
+      min-width: 50px;
+    }
+
+    .edit-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .edit-item {
+      font-size: 100%;
+    }
+
+    .search-container {
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .stats-item {
+      text-align: center;
+    }
+
     .logo-refresh {
       margin-bottom: 20px;
       width: 100px;
@@ -199,6 +392,31 @@ export class SfUserAuth extends LitElement {
     #submit:disabled {
       opacity: 70%;
     }
+
+    .label-search {
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-bottom: 3px;
+    }
+
+    .input-search {
+      width: 200px !important;
+      margin: 5px;
+      margin-right: 0px;
+    }
+
+    .select-search {
+      margin: 5px;
+    }
+
+    .submit-search {
+      margin: 5px;
+    }
+
+    .submit-cancel {
+      margin-right: 5px;
+    }
+
 
     @media (orientation: landscape) {
 
@@ -230,8 +448,20 @@ export class SfUserAuth extends LitElement {
   name!: string;
 
   @property()
-  otp!: string;
+  reason!: string;
 
+  @property()
+  search: string = "";
+
+  @property()
+  offset: number = 0;
+
+  @property()
+  otp!: string;
+  
+  @property()
+  pageBlock!: number;
+  
   @property()
   onArgs = () : string[] => {return []};
 
@@ -244,14 +474,47 @@ export class SfUserAuth extends LitElement {
   @query('#otp')
   _SfUserAuthOtp: any;
 
+  @query('#search')
+  _SfUserAuthSearch: any;
+
+  @query('#filter')
+  _SfUserAuthFilter: any;
+
   @query('#privacy')
   _SfUserAuthPrivacy: any;
 
   @query('#terms')
   _SfUserAuthTerms: any;
 
+  @query('#admin')
+  _SfUserAuthAdmin: any;
+
+  @query('#active')
+  _SfUserAuthActive: any;
+
+  @query('#reason')
+  _SfUserAuthReason: any;
+
+  @query('#locked')
+  _SfUserAuthLocked: any;
+
+  @query('#unlocked')
+  _SfUserAuthUnlocked: any;
+  
+  @query('#logs')
+  _SfUserAuthLogs: any;
+
+  @query('#signout')
+  _SfUserAuthSignout: any;
+
   @query('#submit')
   _SfUserAuthSubmit: any;
+
+  @query('.submit-search')
+  _SfUserAuthSearchSubmit: any;
+
+  @query('.submit-cancel')
+  _SfUserAuthSubmitCancel: any;
 
   @query('.loader-element')
   _SfUserAuthLoader: any;
@@ -277,6 +540,12 @@ export class SfUserAuth extends LitElement {
   @query('#error-client-otp')
   _SfUserAuthErrorOtp: any;
 
+  @query('.table-container')
+  _SfUserAuthTableContainer: any;
+
+  @query('.pages-container')
+  _SfUserAuthPagesContainer: any;
+
   signOut = () => {
     Util.clearCookie('refreshToken');
     const event = new CustomEvent(this.eventSignedOut, {detail: {}, bubbles: true, composed: true});
@@ -301,6 +570,13 @@ export class SfUserAuth extends LitElement {
 
   validateName = (name: string) => {
     if((name + "").length > 3) {
+      return true;
+    }
+    return false;
+  }
+
+  validateSearch = (searchString: string) => {
+    if((searchString + "").length > 1) {
       return true;
     }
     return false;
@@ -335,6 +611,128 @@ export class SfUserAuth extends LitElement {
     this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
   }
 
+  insertLogsHTML = (data: any, pages: number) => {
+
+    var htmlStr = `
+    <table>
+    <tr>
+      <th class="td-email">Email</th>
+      <th class="td-timestamp">Timestamp</th>
+      <th class="td-operation">Operation</th>
+      <th class="td-httpcode">HttpCode</th>
+    </tr>`;
+
+    for(var i = 0; i < data.length; i++) {
+
+      htmlStr += `
+        <tr>
+          <td class="td-email"><a href="#auth/userdetails/${data[i].email}">${data[i].email}</a></td>
+          <td class="td-timestamp">${new Date(parseInt(data[i].timestamp)).toLocaleDateString() + ' ' + new Date(parseInt(data[i].timestamp)).toTimeString()}</td>
+          <td class="td-operation">${data[i].operation}</td>
+          <td class="td-httpcode">${data[i].httpCode}</td>
+        </tr>
+      `;
+    }
+
+    htmlStr += `</table>`;
+
+    if(data.length === 0) {
+      htmlStr = '<div class="no-records">No records found</div>';
+    }
+
+    this._SfUserAuthTableContainer.innerHTML = htmlStr;
+
+    if(data.length > 0) {
+
+      htmlStr = '<div class="pages-label">Pages</div>';
+
+      if(pages < 5) {
+        for(var i = 1; i<= pages; i++) {
+          if(this.onArgs()[1] == null && i === 0) {
+            htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
+          } else if(this.onArgs()[3] != null && parseInt(this.onArgs()[3])/this.pageBlock === i-1) {
+            htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
+          } else {
+            if(this.search.length > 0) {
+              htmlStr += '<div class="pages-item"><a href="#auth/logs/'+this.onArgs()[1]+'/'+this.onArgs()[2]+'/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
+            } else {
+              htmlStr += '<div class="pages-item"><a href="#auth/logs/_/_/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
+            }
+            
+          }
+          
+        }
+      } else {
+  
+        var setFilter = this.onArgs()[1];
+        var setSearch = this.onArgs()[2];
+  
+        if(parseInt(this.onArgs()[3])/this.pageBlock === 0) {
+          htmlStr += '<div class="pages-item-current"><strong>1</strong></div>'
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(1)*this.pageBlock+'">2</a></div>';
+          htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
+        } else if(parseInt(this.onArgs()[3])/this.pageBlock === (pages - 1)) {
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
+          htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-2)*this.pageBlock+'">'+(pages-1)+`</a></div>`;
+          htmlStr += '<div class="pages-item-current"><strong>'+(pages)+`</strong></div>`;
+  
+        } else {
+  
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
+          if( (parseInt(this.onArgs()[3]))/this.pageBlock !== 1 ) {
+            htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+            htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) - this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock)+`</a></div>`;
+          }
+          htmlStr += '<div class="pages-item-current"><strong>'+((parseInt(this.onArgs()[3]))/this.pageBlock + 1)+`</strong></div>`;
+          if( (parseInt(this.onArgs()[3]))/this.pageBlock !== (pages - 2) ) {
+            htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) + this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock + 2)+`</a></div>`;
+            htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+          }
+          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
+  
+        }
+  
+      }
+
+      this._SfUserAuthPagesContainer.innerHTML = htmlStr;  
+
+    }
+
+  }
+
+  insertUserDetailHTML = (data: any) => {
+    this._SfUserAuthEmail.value = data.email;
+    this.email = data.email;
+    if(data.name != null) {
+      this._SfUserAuthName.value = data.name;
+      this.name = data.name;
+    } else {
+      this.name = "";
+    }
+    if(data.reason != null) {
+      this._SfUserAuthReason.value = data.reason;
+      this.reason = data.reason;
+    } else {
+      this.reason = "";
+    }
+    if(data.admin != null) {
+      if(data.admin) {
+        this._SfUserAuthAdmin.setAttribute('checked', true);
+      }
+    }
+    if(data.suspended != null) {
+      if(data.suspended) {
+        this._SfUserAuthActive.removeAttribute('checked');
+      } else {
+        this._SfUserAuthActive.setAttribute('checked', true);
+      }
+    }else {
+      this._SfUserAuthActive.setAttribute('checked', true);
+    }
+  }
+
   prepareXhr = async (data: any, url: string, loaderElement: any, authorization: any) => {
 
     
@@ -348,7 +746,6 @@ export class SfUserAuth extends LitElement {
   onResendSubmit = async () => {
 
     
-
     this.clearMessages();
 
     const xhr : any = (await this.prepareXhr({ "email": this.onArgs()[1] }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null)) as any;
@@ -406,6 +803,19 @@ export class SfUserAuth extends LitElement {
         this.setError(jsonRespose.error);
       }
 
+    } else if(this.onArgs()[0] == 'userdetails') {
+
+      const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+      const xhr : any= (await this.prepareXhr({ "email": this.onArgs()[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/updateuser", this._SfUserAuthLoader, authorization)) as any;
+      this._SfUserAuthLoader.innerHTML = '';
+      if(xhr.status == 200) {
+        this.setSuccess('Update successful!')
+        
+      } else {
+       // const jsonRespose = JSON.parse(xhr.responseText);
+       // this.setError(jsonRespose.error);
+      }
+
     }
     return false;
   }
@@ -434,6 +844,14 @@ export class SfUserAuth extends LitElement {
         this._SfUserAuthSubmit.disabled = false;
       } else {
         this._SfUserAuthSubmit.disabled = true;
+      }
+
+    } else if(this.onArgs()[0] == 'admin') {
+
+      if(this.validateEmail(this._SfUserAuthSearch.value)) {
+        this._SfUserAuthSearchSubmit.disabled = false;
+      } else {
+        this._SfUserAuthSearchSubmit.disabled = true;
       }
 
     }
@@ -480,6 +898,19 @@ export class SfUserAuth extends LitElement {
       this.otp = this._SfUserAuthOtp.value;
       break;
 
+      case 'search':
+
+      this.search = this._SfUserAuthSearch.value;
+      //this.filter = this._SfUserAuthFilter.value;  
+      
+      break;
+
+      case 'reason':
+      
+      this.reason = this._SfUserAuthReason.value;
+
+      break;
+
       default:
 
     }
@@ -490,6 +921,55 @@ export class SfUserAuth extends LitElement {
 
   }
 
+  onLoaded = () => {
+    this._SfUserAuthUnlocked.style.display = 'none';
+    this._SfUserAuthLocked.style.display = 'none';
+    this._SfUserAuthLogs.style.display = 'none';
+    this._SfUserAuthSignout.style.display = 'none';
+    this._SfUserAuthSubmit.style.display = 'none';
+    this._SfUserAuthName.setAttribute('disabled', true);
+    this._SfUserAuthEmail.setAttribute('disabled', true);
+    this._SfUserAuthAdmin.setAttribute('disabled', true);
+    this._SfUserAuthActive.setAttribute('disabled', true);
+    this._SfUserAuthReason.setAttribute('disabled', true);
+  }
+
+  onLocked = () => {
+    this._SfUserAuthUnlocked.style.display = 'none';
+    this._SfUserAuthLocked.style.display = 'block';
+    this._SfUserAuthName.setAttribute('disabled', true);
+    this._SfUserAuthEmail.setAttribute('disabled', true);
+    this._SfUserAuthAdmin.setAttribute('disabled', true);
+    this._SfUserAuthActive.setAttribute('disabled', true);
+    this._SfUserAuthReason.setAttribute('disabled', true);
+    this._SfUserAuthSubmit.style.display = 'none';
+    this._SfUserAuthSignout.style.display = 'block';
+    this._SfUserAuthLogs.style.display = 'block';
+    
+  }
+
+  onUnlocked = () => {
+    this._SfUserAuthLocked.style.display = 'none';
+    this._SfUserAuthUnlocked.style.display = 'block';
+    this._SfUserAuthName.removeAttribute("disabled");
+    this._SfUserAuthAdmin.removeAttribute("disabled");
+    this._SfUserAuthActive.removeAttribute("disabled");
+    this._SfUserAuthReason.removeAttribute("disabled");
+    this._SfUserAuthSubmit.style.display = 'block';
+    this._SfUserAuthSignout.style.display = 'none';
+    this._SfUserAuthLogs.style.display = 'none';
+  }
+
+  onCancelUserDetails = () => {
+    window.history.back();
+  }
+
+  onSearchClick = () => {
+    if(this.onArgs()[0] == 'admin' ) {
+      window.location.href = '#auth/userdetails/' + this.search;
+    }
+  }
+
   decorateSlots = () => {
 
   }
@@ -498,7 +978,83 @@ export class SfUserAuth extends LitElement {
 
   }
 
+  initState = () => {
+
+    if(this.onArgs()[0] == 'userdetails') {
+      this.fetchUserDetails(this.onArgs()[1]);
+      this.onLoaded();
+    }
+
+    this.pageBlock = 50;
+    if(this.onArgs()[0] == 'logs') {
+      this.fetchLogs(parseInt(this.onArgs()[3]), this.onArgs()[1], this.onArgs()[2]);
+    }
+
+    if(this.onArgs()[0] == 'usersignout') {
+      this.fetchSignout(this.onArgs()[1]);
+    }
+
+  }
+
   initListeners = () => {
+
+  }
+
+  fetchUserDetails = async (email: string) => {
+    const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/detailuser", this._SfUserAuthLoader, authorization)) as any;
+    this._SfUserAuthLoader.innerHTML = '';
+    if(xhr.status == 200) {
+      const jsonRespose = JSON.parse(xhr.responseText);
+      this.insertUserDetailHTML(jsonRespose.data.values);
+      this.onLocked();
+    } else {
+      window.location.href = '#auth';
+    }
+  }
+
+  fetchSignout = async (email: string) => {
+    const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+    console.log('authorization', authorization);
+    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/logoutuser", this._SfUserAuthLoader, authorization)) as any;
+    //this._SfUserAuthLoader.innerHTML = '';
+    if(xhr.status == 200) {
+      const jsonRespose = JSON.parse(xhr.responseText);
+      console.log(jsonRespose);
+      this.setSuccess('Signout successful!')
+      setTimeout(() => {
+        window.history.back();
+      }, 2000);
+      //this.insertUserDetailHTML(jsonRespose.data.values);
+      //this.onLocked();
+    } else {
+      window.location.href = '#auth';
+    }
+  }
+
+
+  fetchLogs = async (offset: number, filterKey: string, filterString: string) => {
+
+    if(isNaN(offset)) {
+
+    } else {
+
+      let body : bodyListUsers = {"offset": offset + "", "limit": this.pageBlock + ""};
+      if(this.onArgs()[2].length > 1) {
+        body = {"offset": offset + "", "limit": this.pageBlock + "", "filterKey": filterKey + "", "filterString": filterString};
+      }
+      
+      const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+      const xhr : any= (await this.prepareXhr(body, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/listlogs", this._SfUserAuthLoader, authorization)) as any;
+      this._SfUserAuthLoader.innerHTML = '';
+      if(xhr.status == 200) {
+        const jsonRespose = JSON.parse(xhr.responseText);
+        this.insertLogsHTML(jsonRespose.data.values, jsonRespose.data.pages)
+      } else {
+        window.location.href = '#auth';
+      }
+    }
+
 
   }
 
@@ -512,9 +1068,9 @@ export class SfUserAuth extends LitElement {
         if(xhr.status == 200) {
           const jsonRespose = JSON.parse(xhr.responseText);
           Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
+          Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
           Util.writeCookie('email', jsonRespose.data.email.S);
-          const event = new CustomEvent(this.eventAccessTokenReceived, {detail: {accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S}, bubbles: true, composed: true});
-          console.log('sending event', event);
+          const event = new CustomEvent(this.eventAccessTokenReceived, {detail: {accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin}, bubbles: true, composed: true});
           this.dispatchEvent(event);
         } else {
           this.signOut();
@@ -535,6 +1091,7 @@ export class SfUserAuth extends LitElement {
     this.copySlots();
     this.decorateSlots();
     this.initListeners();
+    this.initState();
   }
   
   override connectedCallback() {
@@ -569,7 +1126,7 @@ export class SfUserAuth extends LitElement {
         <form .onsubmit=${() => {this.onFormSubmit(); return false;}}>
           <div class="div-row">
             <label for="email">Email</label>
-            <input id="email" type="text" @keyup=${() => {this.onKeyUp('email')}}/>
+            <input id="email" type="text" @keyup=${() => {this.onKeyUp('email')}} autofocus/>
             <span id="error-client-email" class="error-client material-icons">priority_high</span>
           </div>
           <div class="div-row-error div-row-submit">
@@ -613,7 +1170,7 @@ export class SfUserAuth extends LitElement {
           </div>
           <div class="div-row">
             <label for="email">Email</label>
-            <input id="email" type="text" @keyup=${() => {this.onKeyUp('email')}}/>
+            <input id="email" type="text" @keyup=${() => {this.onKeyUp('email')}} autofocus/>
             <span id="error-client-email" class="error-client material-icons">priority_high</span>
           </div>
           <div class="div-row-terms">
@@ -676,7 +1233,7 @@ export class SfUserAuth extends LitElement {
         <form .onsubmit=${() => {this.onFormSubmit(); return false;}}>
           <div class="div-row">
             <label for="otp">OTP</label>
-            <input id="otp" type="text" @keyup=${() => {this.onKeyUp('otp')}} placeholder="XXXX"/>
+            <input id="otp" type="text" @keyup=${() => {this.onKeyUp('otp')}} placeholder="XXXX" autofocus/>
             <span id="error-client-otp" class="error-client material-icons">priority_high</span>
           </div>
           <div class="div-row-error div-row-submit">
@@ -707,6 +1264,169 @@ export class SfUserAuth extends LitElement {
         <img .src=${this.logo} class="logo-refresh" />
         <div class="lds-dual-ring-lg"></div>
       </div>
+      </div>
+    `;
+    } else if(this.onArgs()[0] == 'admin') {
+      return html`
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthCAdmin">
+        <div class="stats-container">
+          <h1>Authentication</h1>
+        </div>
+        <div class="stats-container">
+          <div class="badge">Admin</div>
+        </div>
+        <br />
+        <div class="search-container">
+          <div class="div-row-search">
+            <input id="search" class="input-search" type="text" @keyup=${() => {this.onKeyUp('search')}} placeholder="Email address please ..." autofocus>
+            <button class="submit-search" disabled @click=${() => {this.onSearchClick()}}>Search Users</button>
+          </div>
+        </div>
+        <br />
+        <div class="search-container">
+          <div class="div-row table-container">
+          </div>
+          <div class="div-row pages-container">
+          </div>
+        </div>
+        <div class="search-container">
+          <div class="loader-element"></div>
+        </div>
+        <br />
+        <br />
+      </div>
+    `;
+    } else if(this.onArgs()[0] == 'logs') {
+
+      return html`
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthCAdmin">
+        <div class="stats-container">
+          <h1>Access Logs</h1>
+        </div>
+        <div class="stats-container">
+          <div class="badge">Admin</div>
+        </div>
+        <br />
+        <div class="stats-container">
+          <span class="link resend" .onclick=${this.onCancelUserDetails}>${'← back to ' + this.onArgs()[2]}</span>
+        </div>
+        <br />
+        <div class="search-container">
+          <div class="div-row table-container">
+          </div>
+          <div class="div-row pages-container">
+          </div>
+        </div>
+        <div class="search-container">
+          <div class="loader-element"></div>
+        </div>
+
+        <br />
+        <br />
+      </div>
+    `;
+    } else if(this.onArgs()[0] == 'userdetails') {
+      return html`
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthCAdmin">
+        <div class="search-container">
+          <div>
+            <div class="stats-container">
+              <h1>User Information</h1>
+            </div>
+            <div class="stats-container">
+              <div class="badge">Admin</div>
+            </div>
+            <br />
+            <div class="edit-container">
+              <span class="link resend" .onclick=${this.onCancelUserDetails}>← Back</span>
+              <div>
+              <div class="stats-container">
+                <button id="unlocked" class="edit-item" @click=${() => {this.onLocked()}}>Cancel</button>
+                <button id="locked" class="edit-item" @click=${() => {this.onUnlocked()}}>Edit</button>
+              </div>
+              </div>
+            </div>
+            <br />
+            <form .onsubmit=${() => {this.onFormSubmit(); return false;}}>
+              <div class="div-row">
+                <label for="name">Name</label>
+                <input id="name" type="text" @keyup=${() => {this.onKeyUp('name')}}>
+                <span id="error-client-name" class="error-client material-icons">priority_high</span>
+              </div>
+              <div class="div-row">
+                <label for="email">Email</label>
+                <input id="email" type="text" @keyup=${() => {this.onKeyUp('email')}}/>
+                <span id="error-client-email" class="error-client material-icons">priority_high</span>
+              </div>
+              <br />
+              <div class="div-row-userdetails-checkbox">
+                <label for="admin">Admin</label>
+                <input id="admin" type="checkbox" class="checkbox" @change=${() => {this.onCheckedChange()}}/>    
+              </div>
+              <div class="div-row-userdetails-checkbox">
+                <label for="active">Active</label>
+                <input id="active" type="checkbox" class="checkbox" @change=${() => {this.onCheckedChange()}}/>    
+              </div>
+              <br />
+              <div class="div-row">
+                <label for="reason">Reason</label>
+                <input id="reason" type="text" @keyup=${() => {this.onKeyUp('reason')}}/>
+                <span id="error-client-reason" class="error-client material-icons">priority_high</span>
+              </div>
+              <div class="div-row-error div-row-submit">
+                <div class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit success-userdetails">
+                <div class="div-row-success-message"></div>
+              </div>
+              <div class="div-row-submit div-row-submit-userdetails">
+                <div class="loader-element"></div>
+                <div class="actions-container">
+                  <button id="logs" class="edit-item" @click=${() => {window.location.href='#auth/logs/email/' + this.onArgs()[1] + '/0'}}>View Logs</button>
+                  <button id="signout" class="edit-item" @click=${() => {window.location.href='#auth/usersignout/' + this.onArgs()[1]}}>Sign Out</button>
+                  <input id="submit" type="submit" value="Submit">
+                </div>
+              </div>
+            </form>
+            <br />
+            <br />  
+          </div>
+        </div>
+      </div>
+    `;
+    } else if(this.onArgs()[0] == 'usersignout') {
+      return html`
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthCAdmin">
+        <div class="search-container">
+          <div>
+            <div class="stats-container">
+              <h1>User Information</h1>
+            </div>
+            <div class="stats-container">
+              <div class="badge">Admin</div>
+            </div>
+            <br />
+            <div class="stats-container">
+              <div>User ${this.onArgs()[1]} is being signed out ...</div>
+            </div>
+            <div class="refresh-container">
+              <img .src=${this.logo} class="logo-refresh" />
+              <div class="lds-dual-ring-lg"></div>
+            </div>
+            <div class="div-row-error div-row-submit">
+              <div class="div-row-error-message"></div>
+            </div>
+            <div class="div-row-success div-row-submit success-userdetails">
+              <div class="div-row-success-message"></div>
+            </div>
+            <br />
+            <br />  
+          </div>
+        </div>
       </div>
     `;
     } else {

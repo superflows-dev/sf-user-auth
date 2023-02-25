@@ -4,20 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 import { LitElement, PropertyValueMap } from 'lit';
-/**
- * * SfUserAuth element.
- *
- * @fires searchClick - When the user presses the enter key in the search input
- * @property onArgs - Function to get url arguments
- * @property appName - Name of the application
- * @property apiId - AWS Api Gateway Id
- * @slot terms - Slot for holding terms & conditions content
- * @slot privacy - Slot for holding privacy policy content
- * @csscustomproperty --auth-background-color - Background color of the component
- * @csscustomproperty --auth-color - Text color of the component
- * @csscustomproperty --button-background-color - Background color of the component
- * @csscustomproperty --button-color - Text color of the component
- */
 export declare class SfUserAuth extends LitElement {
     eventAccessTokenReceived: string;
     eventSignedOut: string;
@@ -27,14 +13,29 @@ export declare class SfUserAuth extends LitElement {
     appName: string;
     email: string;
     name: string;
+    reason: string;
+    search: string;
+    offset: number;
     otp: string;
+    pageBlock: number;
     onArgs: () => string[];
     _SfUserAuthEmail: any;
     _SfUserAuthName: any;
     _SfUserAuthOtp: any;
+    _SfUserAuthSearch: any;
+    _SfUserAuthFilter: any;
     _SfUserAuthPrivacy: any;
     _SfUserAuthTerms: any;
+    _SfUserAuthAdmin: any;
+    _SfUserAuthActive: any;
+    _SfUserAuthReason: any;
+    _SfUserAuthLocked: any;
+    _SfUserAuthUnlocked: any;
+    _SfUserAuthLogs: any;
+    _SfUserAuthSignout: any;
     _SfUserAuthSubmit: any;
+    _SfUserAuthSearchSubmit: any;
+    _SfUserAuthSubmitCancel: any;
     _SfUserAuthLoader: any;
     _SfUserAuthDivRowError: any;
     _SfUserAuthDivRowErrorMessage: any;
@@ -43,24 +44,38 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthErrorName: any;
     _SfUserAuthErrorEmail: any;
     _SfUserAuthErrorOtp: any;
+    _SfUserAuthTableContainer: any;
+    _SfUserAuthPagesContainer: any;
     signOut: () => void;
     validateTerms: () => any;
     validatePrivacy: () => any;
     validateEmail: (email: string) => boolean;
     validateName: (name: string) => boolean;
+    validateSearch: (searchString: string) => boolean;
     validateOtp: (otp: string) => boolean;
     clearMessages: () => void;
     setError: (msg: string) => void;
     setSuccess: (msg: string) => void;
+    insertLogsHTML: (data: any, pages: number) => void;
+    insertUserDetailHTML: (data: any) => void;
     prepareXhr: (data: any, url: string, loaderElement: any, authorization: any) => Promise<unknown>;
     onResendSubmit: () => Promise<void>;
     onFormSubmit: () => Promise<boolean>;
     evalSubmit: () => void;
     onCheckedChange: () => void;
     onKeyUp: (location: string) => boolean;
+    onLoaded: () => void;
+    onLocked: () => void;
+    onUnlocked: () => void;
+    onCancelUserDetails: () => void;
+    onSearchClick: () => void;
     decorateSlots: () => void;
     copySlots: () => void;
+    initState: () => void;
     initListeners: () => void;
+    fetchUserDetails: (email: string) => Promise<void>;
+    fetchSignout: (email: string) => Promise<void>;
+    fetchLogs: (offset: number, filterKey: string, filterString: string) => Promise<void>;
     initServices: () => Promise<void>;
     constructor();
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;

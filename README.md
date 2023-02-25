@@ -6,7 +6,7 @@
 
 <br />
 
-[![NPM](https://img.shields.io/npm/v/sf-nav.svg)](https://www.npmjs.com/package/sf-nav) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/sf-user-auth.svg)](https://www.npmjs.com/package/sf-user-auth) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 <br />
 
@@ -1677,11 +1677,11 @@ Adding some resources below for your convenience.
 
 [Join Now](https://discord.gg/ksEXS4P9h6)
 
-### **YouTube Channel**
+### YouTube Channel
 
 [**View Channel**](https://www.youtube.com/channel/UCYNJLCE48yir4DsquciBuDw)
 
-### **Documentation**
+### Documentation
 
 [Read Documentation](https://superflows.dev)
 

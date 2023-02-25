@@ -49,68 +49,183 @@
   </head>
   <body>
 
-    <sf-nav>
-      <!-- Set the brand name -->
-      <h2 slot="brandName"><a href="#home" >Superflows</a></h2>
-      <!-- Set the brand logo -->
-      <a slot="brandImage" href="#home" ><img alt="logo" src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_white_transparent_200.png" /></a>
-      <!-- Set the main menu -->
-      <ul slot="mainMenu">
-        <li><a href="#about">About</a></li>
-        <li class="li-solutions">
-          <a href="javascript:void(0);" class="a-solutions">Solutions</a>
-          <ul>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#products">Products</a></li>
+    <div id="nav-container">
+      <sf-nav id="sf-nav">
+          <!-- Set the brand name -->
+          <h2 slot="brandName"><a href="#home" >Superflows</a></h2>
+          <!-- Set the brand logo -->
+          <a slot="brandImage" href="#home" ><img alt="logo" src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png" /></a>
+          
+  
+          <!-- Page Content -->
+          <div slot="content">
+          </div>
+  
+          <!-- Call to action -->
+          <a slot="cta" href="#auth/signin">Sign In</a>
+  
+          <!-- Copyright notice -->
+          <p slot="copyright">Copyright 2022 Superflows</p>
+  
+          <!-- Set the social media links -->
+          <ul slot="socialMedia">
+              <li><a href="https://facebook.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/facebook-black_round.png" /></a></li>
+              <li><a href="https://twitter.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/twitter_black_round.png" /></a></li>
+              <li><a href="https://youtube.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/youtube_black_round.png" /></a></li>
           </ul>
-        </li>
-        <li>
-          <a href="javascript:void(0);">Contact Us</a>
-          <ul>
-            <li><a href="https://instagram.com">Instagram</a></li>
-            <li><a href="https://facebook.com">Facebook</a></li>
-            <li><a href="https://youtube.com">YouTube</a></li>
-          </ul>
-        </li>
-      </ul>
-      <!-- Set the social media links -->
-      <ul slot="socialMedia">
-        <li><a href="https://facebook.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/facebook-black_round.png" /></a></li>
-        <li><a href="https://twitter.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/twitter_black_round.png" /></a></li>
-        <li><a href="https://youtube.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/youtube_black_round.png" /></a></li>
-      </ul>
-      <!-- Set CTA -->
-      <a slot="cta" href="#auth">Sign In</a>
-      <!-- Set copyright notice -->
-      <p slot="copyright">Copyright 2023 Superflows</p>
-      <!-- Profile picture -->
-      <img alt="profile" slot="profilePicture" src="https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg" />
-      <!-- Page Content -->
-      <div slot="content"></div>
-    </sf-nav>
+  
+      </sf-nav>
+    </div>
 
     <script>
+
+      //
+      // Navigation bar related Javascript
+      //
+
+      // Hash map for storing paths & arguments
       var routeMap = [];
-    </script>
-    <script>
+
+      // Menu HTML to be inserted into sf-nav
+      const menu = `
+          <!-- Set the main menu -->
+          <ul slot="mainMenu">
+              <li><a href="#about">About</a></li>
+              <li class="li-solutions">
+                  <a href="javascript:void(0);" class="a-solutions">Solutions</a>
+                  <ul>
+                      <li><a href="#services">Services</a></li>
+                      <li><a href="#products">Products</a></li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="javascript:void(0);">Contact Us</a>
+                  <ul>
+                      <li><a href="https://instagram.com">Instagram</a></li>
+                      <li><a href="https://facebook.com">Facebook</a></li>
+                      <li><a href="https://youtube.com">YouTube</a></li>
+                  </ul>
+              </li>
+          </ul>
+      `;
+      
+      // Profile menu HTML to be inserted into sf-nav
+      const profileMenu = `
+          <ul id="profile-menu" slot="profileMenu">
+              <li>
+                  <a href="#auth/signout">Sign Out</a>
+              </li>
+          </ul>
+      `;
+
+      // Profile menu HTML to be inserted into sf-nav
+      const profileMenuAdmin = `
+          <ul id="profile-menu" slot="profileMenu">
+              <li>
+                  <a href="javascript:void(0);">Admin</a>
+                  <ul>
+                      <li><a href="#auth/admin">Authentication</a></li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="#auth/signout">Sign Out</a>
+              </li>
+          </ul>
+      `;
+
+      // Profile image HTML to be inserted into sf-nav
+      const profileImg = `
+          <img id="profile-img" alt="profile" slot="profilePicture" src="https://superflows-images.s3.ap-south-1.amazonaws.com/user.png" />
+      `;
+
+      // What's the current path?
       function getCurrentPathName() {
-        return window.location.hash.length === 0 ? '' : window.location.hash.split("/")[0].replace('#', '');
+          return window.location.hash.length === 0 ? '' : window.location.hash.split("/")[0].replace('#', '');
       }
+
+      // What are the current arguments?
       function getCurrentArgs() {
-        return routeMap[getCurrentPathName() + '.html'];
+          return routeMap[getCurrentPathName() + '.html'];
       }
-    </script>
-    <script>
-      document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) => {console.log('hurray ' + JSON.stringify(e.detail));})
-      document.getElementsByTagName('sf-nav')[0].addEventListener('routeChange', (e) => {
-        routeMap[e.detail.pathName] = e.detail.args;
-      })
-      document.getElementsByTagName('sf-nav')[0].addEventListener('accessTokenReceived', (e) => {
-        alert('Sign in successful: ' + JSON.stringify(e.detail));
-      })
-      document.getElementsByTagName('sf-nav')[0].addEventListener('signedOut', (e) => {
-        alert('Signed out: ' + JSON.stringify(e.detail));
-      })
+
+      // Initiate navigation bar listeners
+      function initiateListeners() {
+          document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) => {console.log('hurray ' + JSON.stringify(e.detail));})
+          document.getElementsByTagName('sf-nav')[0].addEventListener('routeChange', (e) => {
+              routeMap[e.detail.pathName] = e.detail.args;
+          })
+      }
+      
+      // 
+      // Handling the authentication
+      // 
+
+      // Initiate the menu (first load)
+      function insertSfNavMenu() {
+          const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
+          const newInnerHTML = currentInnerHTML + menu;
+          document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
+          initiateListeners();
+          
+      }
+
+      // Update the navigation bar after sign in successful
+      function insertSignInSfNavMenu() {
+
+          window.location.hash='#home';
+          
+          setTimeout(() => {
+              const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
+              console.log(currentInnerHTML);
+              const newInnerHTML = currentInnerHTML + (currentInnerHTML.indexOf('profilePicture') < 0 ? profileImg : "") + menu + profileMenu;
+              document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
+              initiateListeners();    
+          }, 500);
+          
+      }
+
+      // Update the navigation bar after sign in successful
+      function insertSignInSfNavMenuForAdmin() {
+
+        window.location.hash='#home';
+
+        setTimeout(() => {
+            const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
+            console.log(currentInnerHTML);
+            const newInnerHTML = currentInnerHTML + (currentInnerHTML.indexOf('profilePicture') < 0 ? profileImg : "") + menu + profileMenuAdmin;
+            document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
+            initiateListeners();    
+        }, 500);
+
+        }
+
+      // Update the navigation bar after sign out successful
+      function insertSignOutSfNavMenu() {
+
+          window.location.hash='#home';
+
+          setTimeout(() => {
+
+              if(document.getElementById('profile-img') != null) {
+                  document.getElementById('profile-img').outerHTML = '';
+                  const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
+                  const newInnerHTML = currentInnerHTML + menu;
+                  document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
+                  initiateListeners();
+              }
+
+          }, 500);
+
+      }
+     
+      function initPage() {
+
+          insertSfNavMenu();
+
+      }
+
+      initPage();
+
     </script>
   </body>
 </html>
