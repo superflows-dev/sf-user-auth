@@ -382,7 +382,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.copySlots = () => {
         };
-        this.initState = () => {
+        this.initState = async () => {
             if (this.onArgs()[0] == 'userdetails') {
                 this.fetchUserDetails(this.onArgs()[1]);
                 this.onLoaded();
@@ -393,6 +393,24 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             if (this.onArgs()[0] == 'usersignout') {
                 this.fetchSignout(this.onArgs()[1]);
+            }
+            if (this.onArgs()[0] == 'refresh') {
+                const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
+                const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
+                if (xhr.status == 200) {
+                    const jsonRespose = JSON.parse(xhr.responseText);
+                    Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
+                    Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
+                    Util.writeCookie('email', jsonRespose.data.email.S);
+                    const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
+                    this.dispatchEvent(event);
+                }
+                else {
+                    this.signOut();
+                }
+            }
+            if (this.onArgs()[0] == 'signout') {
+                this.signOut();
             }
         };
         this.initListeners = () => {
@@ -412,12 +430,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.fetchSignout = async (email) => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-            console.log('authorization', authorization);
             const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/logoutuser", this._SfUserAuthLoader, authorization));
             //this._SfUserAuthLoader.innerHTML = '';
             if (xhr.status == 200) {
-                const jsonRespose = JSON.parse(xhr.responseText);
-                console.log(jsonRespose);
                 this.setSuccess('Signout successful!');
                 setTimeout(() => {
                     window.history.back();
@@ -449,28 +464,6 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
             }
         };
-        this.initServices = async () => {
-            if (this.onArgs()[0] == 'refresh') {
-                if (this.onArgs()[1] != null) {
-                    const authorization = btoa(this.onArgs()[1] + ":" + Util.readCookie('refreshToken'));
-                    const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
-                    if (xhr.status == 200) {
-                        const jsonRespose = JSON.parse(xhr.responseText);
-                        Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-                        Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
-                        Util.writeCookie('email', jsonRespose.data.email.S);
-                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
-                        this.dispatchEvent(event);
-                    }
-                    else {
-                        this.signOut();
-                    }
-                }
-            }
-            else if (this.onArgs()[0] == 'signout') {
-                this.signOut();
-            }
-        };
     }
     firstUpdated(_changedProperties) {
         this.copySlots();
@@ -482,7 +475,6 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         super.connectedCallback();
     }
     getUiRefresh() {
-        window.location.hash = '#auth/refresh/' + Util.readCookie('email');
         return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -523,7 +515,6 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       `;
     }
     render() {
-        this.initServices();
         if (this.onArgs() == null || this.onArgs().length === 0) {
             return this.getUiRefresh();
         }

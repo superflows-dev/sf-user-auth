@@ -71,12 +71,11 @@ export declare class SfUserAuth extends LitElement {
     onSearchClick: () => void;
     decorateSlots: () => void;
     copySlots: () => void;
-    initState: () => void;
+    initState: () => Promise<void>;
     initListeners: () => void;
     fetchUserDetails: (email: string) => Promise<void>;
     fetchSignout: (email: string) => Promise<void>;
     fetchLogs: (offset: number, filterKey: string, filterString: string) => Promise<void>;
-    initServices: () => Promise<void>;
     constructor();
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
     connectedCallback(): void;
