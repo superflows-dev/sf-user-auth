@@ -40,8 +40,14 @@ async function callApi(url, data, authorization) {
         return xhr;
     });
 }
+function goBack() {
+    window.history.back();
+}
+function goTo(path) {
+    window.location.href = path;
+}
 const exportFunctions = {
-    writeCookie, readCookie, clearCookie, callApi
+    writeCookie, readCookie, clearCookie, callApi, goBack, goTo
 };
 export default exportFunctions;
 //# sourceMappingURL=util.js.map

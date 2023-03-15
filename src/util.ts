@@ -49,8 +49,16 @@ async function callApi(url: string, data: string, authorization: any) {
 
 }
 
+function goBack() {
+    window.history.back();
+}
+
+function goTo(path: string) {
+    window.location.href = path;
+}
+
 const exportFunctions = {
-    writeCookie, readCookie, clearCookie, callApi
+    writeCookie, readCookie, clearCookie, callApi, goBack, goTo
 };
 
 export default exportFunctions;

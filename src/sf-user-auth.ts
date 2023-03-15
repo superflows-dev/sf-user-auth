@@ -75,6 +75,14 @@ export class SfUserAuth extends LitElement {
       color: green;
     }
 
+    #unlocked {
+      display: none;
+    }
+
+    .details-submit {
+      display: none;
+    }
+
     #logs {
       margin-right: 10px;
     }
@@ -548,6 +556,8 @@ export class SfUserAuth extends LitElement {
 
   signOut = () => {
     Util.clearCookie('refreshToken');
+    Util.clearCookie('accessToken');
+    Util.clearCookie('email');
     const event = new CustomEvent(this.eventSignedOut, {detail: {}, bubbles: true, composed: true});
     this.dispatchEvent(event);
     //window.location.hash = '#auth/signin';
@@ -570,13 +580,6 @@ export class SfUserAuth extends LitElement {
 
   validateName = (name: string) => {
     if((name + "").length > 3) {
-      return true;
-    }
-    return false;
-  }
-
-  validateSearch = (searchString: string) => {
-    if((searchString + "").length > 1) {
       return true;
     }
     return false;
@@ -611,7 +614,7 @@ export class SfUserAuth extends LitElement {
     this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
   }
 
-  insertLogsHTML = (data: any, pages: number) => {
+  insertLogsHTML = (data: any) => {
 
     var htmlStr = `
     <table>
@@ -642,63 +645,66 @@ export class SfUserAuth extends LitElement {
 
     this._SfUserAuthTableContainer.innerHTML = htmlStr;
 
-    if(data.length > 0) {
+    
+    // if(data.length > 0) {
 
-      htmlStr = '<div class="pages-label">Pages</div>';
+    //   htmlStr = '<div class="pages-label">Pages</div>';
 
-      if(pages < 5) {
-        for(var i = 1; i<= pages; i++) {
-          if(this.onArgs()[1] == null && i === 0) {
-            htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
-          } else if(this.onArgs()[3] != null && parseInt(this.onArgs()[3])/this.pageBlock === i-1) {
-            htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
-          } else {
-            if(this.search.length > 0) {
-              htmlStr += '<div class="pages-item"><a href="#auth/logs/'+this.onArgs()[1]+'/'+this.onArgs()[2]+'/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
-            } else {
-              htmlStr += '<div class="pages-item"><a href="#auth/logs/_/_/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
-            }
+    //   if(pages < 5) {
+    //     for(var i = 1; i<= pages; i++) {
+    //       // if(this.onArgs()[1] == null && i === 0) {
+    //       //   htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
+    //       // } else 
+    //       if(this.onArgs()[3] != null && parseInt(this.onArgs()[3])/this.pageBlock === i-1) {
+    //         htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
+    //       } 
+    //       else {
+    //         if(this.search.length > 0) {
+    //           htmlStr += '<div class="pages-item"><a href="#auth/logs/'+this.onArgs()[1]+'/'+this.onArgs()[2]+'/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
+    //         } else {
+    //           htmlStr += '<div class="pages-item"><a href="#auth/logs/_/_/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
+    //         }
             
-          }
+    //       }
           
-        }
-      } else {
+    //     }
+    //   } else {
   
-        var setFilter = this.onArgs()[1];
-        var setSearch = this.onArgs()[2];
+    //     var setFilter = this.onArgs()[1];
+    //     var setSearch = this.onArgs()[2];
   
-        if(parseInt(this.onArgs()[3])/this.pageBlock === 0) {
-          htmlStr += '<div class="pages-item-current"><strong>1</strong></div>'
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(1)*this.pageBlock+'">2</a></div>';
-          htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
-        } else if(parseInt(this.onArgs()[3])/this.pageBlock === (pages - 1)) {
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
-          htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-2)*this.pageBlock+'">'+(pages-1)+`</a></div>`;
-          htmlStr += '<div class="pages-item-current"><strong>'+(pages)+`</strong></div>`;
+    //     if(parseInt(this.onArgs()[3])/this.pageBlock === 0) {
+    //       htmlStr += '<div class="pages-item-current"><strong>1</strong></div>'
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(1)*this.pageBlock+'">2</a></div>';
+    //       htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
+    //     } else if(parseInt(this.onArgs()[3])/this.pageBlock === (pages - 1)) {
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
+    //       htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-2)*this.pageBlock+'">'+(pages-1)+`</a></div>`;
+    //       htmlStr += '<div class="pages-item-current"><strong>'+(pages)+`</strong></div>`;
   
-        } else {
+    //     } else {
   
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
-          if( (parseInt(this.onArgs()[3]))/this.pageBlock !== 1 ) {
-            htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-            htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) - this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock)+`</a></div>`;
-          }
-          htmlStr += '<div class="pages-item-current"><strong>'+((parseInt(this.onArgs()[3]))/this.pageBlock + 1)+`</strong></div>`;
-          if( (parseInt(this.onArgs()[3]))/this.pageBlock !== (pages - 2) ) {
-            htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) + this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock + 2)+`</a></div>`;
-            htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-          }
-          htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
+    //       if( (parseInt(this.onArgs()[3]))/this.pageBlock !== 1 ) {
+    //         htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+    //         htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) - this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock)+`</a></div>`;
+    //       }
+    //       htmlStr += '<div class="pages-item-current"><strong>'+((parseInt(this.onArgs()[3]))/this.pageBlock + 1)+`</strong></div>`;
+    //       if( (parseInt(this.onArgs()[3]))/this.pageBlock !== (pages - 2) ) {
+    //         htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) + this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock + 2)+`</a></div>`;
+    //         htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
+    //       }
+    //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
   
-        }
+    //     }
   
-      }
+    //   }
 
-      this._SfUserAuthPagesContainer.innerHTML = htmlStr;  
+    //   this._SfUserAuthPagesContainer.innerHTML = htmlStr;  
 
-    }
+    // }
 
   }
 
@@ -811,9 +817,6 @@ export class SfUserAuth extends LitElement {
       if(xhr.status == 200) {
         this.setSuccess('Update successful!')
         
-      } else {
-       // const jsonRespose = JSON.parse(xhr.responseText);
-       // this.setError(jsonRespose.error);
       }
 
     }
@@ -921,19 +924,6 @@ export class SfUserAuth extends LitElement {
 
   }
 
-  onLoaded = () => {
-    this._SfUserAuthUnlocked.style.display = 'none';
-    this._SfUserAuthLocked.style.display = 'none';
-    this._SfUserAuthLogs.style.display = 'none';
-    this._SfUserAuthSignout.style.display = 'none';
-    this._SfUserAuthSubmit.style.display = 'none';
-    this._SfUserAuthName.setAttribute('disabled', true);
-    this._SfUserAuthEmail.setAttribute('disabled', true);
-    this._SfUserAuthAdmin.setAttribute('disabled', true);
-    this._SfUserAuthActive.setAttribute('disabled', true);
-    this._SfUserAuthReason.setAttribute('disabled', true);
-  }
-
   onLocked = () => {
     this._SfUserAuthUnlocked.style.display = 'none';
     this._SfUserAuthLocked.style.display = 'block';
@@ -961,12 +951,12 @@ export class SfUserAuth extends LitElement {
   }
 
   onCancelUserDetails = () => {
-    window.history.back();
+    Util.goBack();
   }
 
   onSearchClick = () => {
     if(this.onArgs()[0] == 'admin' ) {
-      window.location.href = '#auth/userdetails/' + this.search;
+      Util.goTo('#auth/userdetails/' + this.search);
     }
   }
 
@@ -981,11 +971,17 @@ export class SfUserAuth extends LitElement {
   initState = async () => {
 
     if(this.onArgs()[0] == 'userdetails') {
-      this.fetchUserDetails(this.onArgs()[1]);
-      this.onLoaded();
+      // if(this._SfUserAuthEmail != null) {
+      //   console.log('not null');
+      //   if(this._SfUserAuthEmail.value.length === 0) {
+         
+      //   }
+      // }
+      await this.fetchUserDetails(this.onArgs()[1]);
+      
     }
 
-    this.pageBlock = 50;
+    this.pageBlock = 100;
     if(this.onArgs()[0] == 'logs') {
       this.fetchLogs(parseInt(this.onArgs()[3]), this.onArgs()[1], this.onArgs()[2]);
     }
@@ -1030,7 +1026,7 @@ export class SfUserAuth extends LitElement {
       this.insertUserDetailHTML(jsonRespose.data.values);
       this.onLocked();
     } else {
-      window.location.href = '#auth';
+      window.location.href = '#auth/refresh';
     }
   }
 
@@ -1046,10 +1042,9 @@ export class SfUserAuth extends LitElement {
       //this.insertUserDetailHTML(jsonRespose.data.values);
       //this.onLocked();
     } else {
-      window.location.href = '#auth';
+      this.signOut()
     }
   }
-
 
   fetchLogs = async (offset: number, filterKey: string, filterString: string) => {
 
@@ -1067,9 +1062,9 @@ export class SfUserAuth extends LitElement {
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         const jsonRespose = JSON.parse(xhr.responseText);
-        this.insertLogsHTML(jsonRespose.data.values, jsonRespose.data.pages)
+        this.insertLogsHTML(jsonRespose.data.values)
       } else {
-        window.location.href = '#auth';
+        this.signOut();
       }
     }
 
@@ -1139,6 +1134,8 @@ export class SfUserAuth extends LitElement {
   }
 
   override render() {
+
+    this.initState();
 
     if(this.onArgs() == null || this.onArgs().length === 0) {
 
@@ -1317,6 +1314,7 @@ export class SfUserAuth extends LitElement {
       </div>
     `;
     } else if(this.onArgs()[0] == 'userdetails') {
+
       return html`
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthCAdmin">
@@ -1376,7 +1374,7 @@ export class SfUserAuth extends LitElement {
                 <div class="actions-container">
                   <button id="logs" class="edit-item" @click=${() => {window.location.href='#auth/logs/email/' + this.onArgs()[1] + '/0'}}>View Logs</button>
                   <button id="signout" class="edit-item" @click=${() => {window.location.href='#auth/usersignout/' + this.onArgs()[1]}}>Sign Out</button>
-                  <input id="submit" type="submit" value="Submit">
+                  <input id="submit" class="details-submit" type="submit" value="Submit">
                 </div>
               </div>
             </form>

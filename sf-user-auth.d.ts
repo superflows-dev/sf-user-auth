@@ -51,12 +51,11 @@ export declare class SfUserAuth extends LitElement {
     validatePrivacy: () => any;
     validateEmail: (email: string) => boolean;
     validateName: (name: string) => boolean;
-    validateSearch: (searchString: string) => boolean;
     validateOtp: (otp: string) => boolean;
     clearMessages: () => void;
     setError: (msg: string) => void;
     setSuccess: (msg: string) => void;
-    insertLogsHTML: (data: any, pages: number) => void;
+    insertLogsHTML: (data: any) => void;
     insertUserDetailHTML: (data: any) => void;
     prepareXhr: (data: any, url: string, loaderElement: any, authorization: any) => Promise<unknown>;
     onResendSubmit: () => Promise<void>;
@@ -64,7 +63,6 @@ export declare class SfUserAuth extends LitElement {
     evalSubmit: () => void;
     onCheckedChange: () => void;
     onKeyUp: (location: string) => boolean;
-    onLoaded: () => void;
     onLocked: () => void;
     onUnlocked: () => void;
     onCancelUserDetails: () => void;
