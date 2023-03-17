@@ -31,8 +31,8 @@
 
       .cContainer {
         margin: 20px;
-        padding: 20px;
-        border: dashed 1px gray;
+        /* padding: 20px; */
+        /* border: dashed 1px gray; */
         /* background-color: rgb(4, 135, 205); */
       }
 
@@ -40,10 +40,69 @@
         display: none;
       }
 
-      /* sf-user-auth {
-        --auth-background-color: rgb(4, 135, 205);
-        --auth-color: #fff;
-      } */
+      sf-user-auth::part(title) {
+        border-bottom: solid 10px black;
+        color: white;
+      }
+
+      sf-user-auth::part(subtitle) {
+        text-align: center;
+      }
+
+      sf-user-auth::part(container) {
+        background-color: #444;
+        color: #ddd;
+      }
+
+      sf-user-auth::part(errormsg) {
+        background-color: black;
+      }
+
+      sf-user-auth::part(successmsg) {
+        background-color: black;
+      }
+
+      sf-user-auth::part(input) {
+        background-color: #333;
+        padding: 5px;
+        color: #fff;
+        border-left: solid 5px black;
+        border-right: none;
+        border-top: none;
+        border-bottom: none;
+      }
+
+      sf-user-auth::part(submit) {
+        background-image: none;
+        background-color: #333;
+        padding: 5px;
+        color: #fff;
+        border-radius: 3px;
+        border: none;
+        box-shadow: 3px 3px 0px black;
+      }
+
+      sf-user-auth::part(buttonprimary) {
+        background-image: none;
+        background-color: #222;
+        padding: 5px;
+        color: #fff;
+        border-radius: 3px;
+        border: none;
+        cursor: pointer;
+      }
+
+      sf-user-auth::part(submit):active {
+        background-color: #000;
+        box-shadow: 1px 1px 0px black;
+      }
+
+      sf-user-auth::part(badge) {
+        margin-top: -15px;
+        background-color: #000;
+        border: none;
+        font-size: 90%;
+      }
 
     </style>
   </head>

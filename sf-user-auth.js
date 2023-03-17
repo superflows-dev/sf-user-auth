@@ -458,10 +458,12 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
-      <div class="refresh-container">
-        <img .src=${this.logo} class="logo-refresh" />
-        <div class="lds-dual-ring-lg"></div>
-      </div>
+        <div part="container" class="SfUserAuthCChild">
+          <div class="refresh-container">
+            <img .src=${this.logo} class="logo-refresh" />
+            <div class="lds-dual-ring-lg"></div>
+          </div>
+        </div>
       </div>
     `;
     }
@@ -470,27 +472,29 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-        <h1>Sign In</h1>
-        <h4>Hello again!</h4>
-        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-          <div class="div-row">
-            <label for="email">Email</label>
-            <input id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }} autofocus/>
-            <span id="error-client-email" class="error-client material-icons">priority_high</span>
+          <div part="container" class="SfUserAuthCChild">
+            <h1 part="title">Sign In</h1>
+            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <h4 part="subtitle">Hello again!</h4>
+              <label part="label" for="email">Email</label><br />
+              <div class="div-row">
+                <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }} autofocus/>
+                <span id="error-client-email" class="error-client material-icons">priority_high</span>
+              </div>
+              <div class="div-row-error div-row-submit">
+                <div part="errormsg" class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit">
+                <div part="successmsg" class="div-row-success-message"></div>
+              </div>
+              <div class="div-row-submit">
+                <input part="submit" id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
+              </div>
+              <div class="div-row-terms">
+                <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
+              </div>
+            </form>
           </div>
-          <div class="div-row-error div-row-submit">
-            <div class="div-row-error-message"></div>
-          </div>
-          <div class="div-row-success div-row-submit">
-            <div class="div-row-success-message"></div>
-          </div>
-          <div class="div-row-submit">
-            <input id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
-          </div>
-          <div class="div-row-terms">
-            <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
-          </div>
-        </form>
         </div>
       `;
     }
@@ -503,40 +507,45 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <div class="SfUserAuthC">
-        <h1>Sign Up</h1>
-        <h4>Let's create a new ${this.appName} account</h4>
-        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-          <div class="div-row">
-            <label for="name">Name</label>
-            <input id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
-            <span id="error-client-name" class="error-client material-icons">priority_high</span>
+          <div part="container" class="SfUserAuthCChild">
+            <h1 part="title">Sign Up</h1>
+            <h4 part="subtitle">Let's create a new ${this.appName} account</h4>
+            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <label part="label" for="name">Name</label><br />
+              <div class="div-row">
+                <input part="input" id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
+                <span id="error-client-name" class="error-client material-icons">priority_high</span>
+              </div>
+              <br />
+              <label part="label" for="email">Email</label><br />
+              <div class="div-row">
+                <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }} autofocus/>
+                <span id="error-client-email" class="error-client material-icons">priority_high</span>
+              </div>
+              <br />
+              <div class="div-row-terms">
+                <input id="terms" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
+                <label for="terms">I would like to receive important email communication</label>
+              </div>
+              <div class="div-row-terms">
+                <input id="privacy" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
+                <label for="privacy">I agree to the <a href="#auth/terms">terms</a> and <a href="#auth/privacy">privacy policy</a></label>
+              </div>
+              <br />
+              <div class="div-row-error div-row-submit">
+                <div part="errormsg" class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit">
+                <div part="successmsg" class="div-row-success-message"></div>
+              </div>
+              <div class="div-row-submit">
+                <input part="submit" id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
+              </div>
+              <div class="div-row-terms">
+                <span>I already have an account. <a href="#auth/signin">Sign In</a></span>
+              </div>
+            </form>
           </div>
-          <div class="div-row">
-            <label for="email">Email</label>
-            <input id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }} autofocus/>
-            <span id="error-client-email" class="error-client material-icons">priority_high</span>
-          </div>
-          <div class="div-row-terms">
-            <input id="terms" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
-            <label for="terms">I would like to receive important email communication</label>
-          </div>
-          <div class="div-row-terms">
-            <input id="privacy" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>
-            <label for="privacy">I agree to the <a href="#auth/terms">terms</a> and <a href="#auth/privacy">privacy policy</a></label>
-          </div>
-          <div class="div-row-error div-row-submit">
-            <div class="div-row-error-message"></div>
-          </div>
-          <div class="div-row-success div-row-submit">
-            <div class="div-row-success-message"></div>
-          </div>
-          <div class="div-row-submit">
-            <input id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
-          </div>
-          <div class="div-row-terms">
-            <span>I already have an account. <a href="#auth/signin">Sign In</a></span>
-          </div>
-        </form>
         </div>
       `;
         }
@@ -544,9 +553,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-        <div>
-          <slot name="terms"></slot>
-        </div>
+          <div part="container" class="SfUserAuthCChild">
+            <h1 part="title">Terms of Use</h1>
+            <slot name="terms"></slot>
+          </div>
         </div>
       `;
         }
@@ -554,9 +564,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-        <div>
-          <slot name="privacy"></slot>
-        </div>
+          <div part="container" class="SfUserAuthCChild">
+            <h1 part="title">Privacy</h1>
+            <slot name="privacy"></slot>
+          </div>
         </div>
       `;
         }
@@ -567,27 +578,29 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-        <h1>Verify</h1>
-        <h4>Verification email with a one-time-password (OTP) has been sent to <strong>${this.onArgs()[1]}</strong></h4>
-        <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-          <div class="div-row">
-            <label for="otp">OTP</label>
-            <input id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX" autofocus/>
-            <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+          <div part="container" class="SfUserAuthCChild">
+            <h1 part="title">Verify</h1>
+            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${this.onArgs()[1]}</strong></h4>
+              <label part="label" for="otp">OTP</label><br />
+              <div class="div-row">
+                <input part="input" id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX" autofocus/>
+                <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+              </div>
+              <div class="div-row-error div-row-submit">
+                <div part="errormsg" class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit">
+                <div part="successmsg" class="div-row-success-message"></div>
+              </div>
+              <div class="div-row-submit">
+                <input part="submit" id="submit" type="submit" value="Verify" disabled><div class="loader-element"></div>
+              </div>
+              <div class="div-row-terms">
+                <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
+              </div>
+            </form>
           </div>
-          <div class="div-row-error div-row-submit">
-            <div class="div-row-error-message"></div>
-          </div>
-          <div class="div-row-success div-row-submit">
-            <div class="div-row-success-message"></div>
-          </div>
-          <div class="div-row-submit">
-            <input id="submit" type="submit" value="Verify" disabled><div class="loader-element"></div>
-          </div>
-          <div class="div-row-terms">
-            <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
-          </div>
-        </form>
         </div>
       `;
         }
@@ -598,142 +611,150 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
-      <div class="refresh-container">
-        <img .src=${this.logo} class="logo-refresh" />
-        <div class="lds-dual-ring-lg"></div>
-      </div>
+        <div part="container" class="SfUserAuthCChild">
+          <div class="refresh-container">
+            <img .src=${this.logo} class="logo-refresh" />
+            <div class="lds-dual-ring-lg"></div>
+          </div>
+        </div>
       </div>
     `;
         }
         else if (this.onArgs()[0] == 'admin') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <div class="SfUserAuthCAdmin">
-        <div class="stats-container">
-          <h1>Authentication</h1>
-        </div>
-        <div class="stats-container">
-          <div class="badge">Admin</div>
-        </div>
-        <br />
-        <div class="search-container">
-          <div class="div-row-search">
-            <input id="search" class="input-search" type="text" @keyup=${() => { this.onKeyUp('search'); }} placeholder="Email address please ..." autofocus>
-            <button class="submit-search" disabled @click=${() => { this.onSearchClick(); }}>Search Users</button>
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild">
+          <div class="stats-container">
+            <h1 part="title">Authentication</h1>
           </div>
-        </div>
-        <br />
-        <div class="search-container">
-          <div class="div-row table-container">
+          <div class="stats-container">
+            <div part="badge" class="badge">Admin</div>
           </div>
-          <div class="div-row pages-container">
+          <br />
+          <div class="search-container">
+            <div class="div-row-search">
+              <input part="input" id="search" class="input-search" type="email" @keyup=${() => { this.onKeyUp('search'); }} placeholder="Email address please ..." autofocus>
+              <button part="submit" class="submit-search" disabled @click=${() => { this.onSearchClick(); }}>Search Users</button>
+            </div>
           </div>
+          <br />
+          <div class="search-container">
+            <div class="div-row table-container">
+            </div>
+            <div class="div-row pages-container">
+            </div>
+          </div>
+          <div class="search-container">
+            <div class="loader-element"></div>
+          </div>
+          <br />
+          <br />
         </div>
-        <div class="search-container">
-          <div class="loader-element"></div>
-        </div>
-        <br />
-        <br />
       </div>
     `;
         }
         else if (this.onArgs()[0] == 'logs') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <div class="SfUserAuthCAdmin">
-        <div class="stats-container">
-          <h1>Access Logs</h1>
-        </div>
-        <div class="stats-container">
-          <div class="badge">Admin</div>
-        </div>
-        <br />
-        <div class="stats-container">
-          <span class="link resend" .onclick=${this.onCancelUserDetails}>${'← back to ' + this.onArgs()[2]}</span>
-        </div>
-        <br />
-        <div class="search-container">
-          <div class="div-row table-container">
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild">
+          <div class="stats-container">
+            <h1 part="title">Access Logs</h1>
           </div>
-          <div class="div-row pages-container">
+          <div class="stats-container">
+            <div part="badge" class="badge">Admin</div>
           </div>
-        </div>
-        <div class="search-container">
-          <div class="loader-element"></div>
-        </div>
+          <br />
+          <div class="stats-container">
+            <span class="link resend" .onclick=${this.onCancelUserDetails}>${'← back to ' + this.onArgs()[2]}</span>
+          </div>
+          <br />
+          <div class="search-container">
+            <div class="div-row table-container">
+            </div>
+            <div class="div-row pages-container">
+            </div>
+          </div>
+          <div class="search-container">
+            <div class="loader-element"></div>
+          </div>
 
-        <br />
-        <br />
+          <br />
+          <br />
+        </div>
       </div>
     `;
         }
         else if (this.onArgs()[0] == 'userdetails') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <div class="SfUserAuthCAdmin">
-        <div class="search-container">
-          <div>
-            <div class="stats-container">
-              <h1>User Information</h1>
-            </div>
-            <div class="stats-container">
-              <div class="badge">Admin</div>
-            </div>
-            <br />
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild">
+          <div class="stats-container">
+            <h1 part="title">User Information</h1>
+          </div>
+          <div class="stats-container">
+                <div part="badge" class="badge">Admin</div>
+          </div>
+          <br /><br />
+          <form onsubmit="return false;">
             <div class="edit-container">
               <span class="link resend" .onclick=${this.onCancelUserDetails}>← Back</span>
               <div>
               <div class="stats-container">
-                <button id="unlocked" class="edit-item" @click=${() => { this.onLocked(); }}>Cancel</button>
-                <button id="locked" class="edit-item" @click=${() => { this.onUnlocked(); }}>Edit</button>
+                <button part="buttonprimary" id="unlocked" class="edit-item" @click=${() => { this.onLocked(); }}>Cancel</button>
+                <button part="buttonprimary" id="locked" class="edit-item" @click=${() => { this.onUnlocked(); }}>Edit</button>
               </div>
               </div>
             </div>
+          </form>
+          <br />
+          <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+            <label part="label" for="name">Name</label><br />
+            <div class="div-row">
+              <input part="input" id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
+              <span id="error-client-name" class="error-client material-icons">priority_high</span>
+            </div>
             <br />
-            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <div class="div-row">
-                <label for="name">Name</label>
-                <input id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
-                <span id="error-client-name" class="error-client material-icons">priority_high</span>
-              </div>
-              <div class="div-row">
-                <label for="email">Email</label>
-                <input id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }}/>
-                <span id="error-client-email" class="error-client material-icons">priority_high</span>
-              </div>
-              <br />
-              <div class="div-row-userdetails-checkbox">
-                <label for="admin">Admin</label>
-                <input id="admin" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>    
-              </div>
-              <div class="div-row-userdetails-checkbox">
-                <label for="active">Active</label>
-                <input id="active" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>    
-              </div>
-              <br />
-              <div class="div-row">
-                <label for="reason">Reason</label>
-                <input id="reason" type="text" @keyup=${() => { this.onKeyUp('reason'); }}/>
-                <span id="error-client-reason" class="error-client material-icons">priority_high</span>
-              </div>
-              <div class="div-row-error div-row-submit">
-                <div class="div-row-error-message"></div>
-              </div>
-              <div class="div-row-success div-row-submit success-userdetails">
-                <div class="div-row-success-message"></div>
-              </div>
-              <div class="div-row-submit div-row-submit-userdetails">
-                <div class="loader-element"></div>
-                <div class="actions-container">
-                  <button id="logs" class="edit-item" @click=${() => { window.location.href = '#auth/logs/email/' + this.onArgs()[1] + '/0'; }}>View Logs</button>
-                  <button id="signout" class="edit-item" @click=${() => { window.location.href = '#auth/usersignout/' + this.onArgs()[1]; }}>Sign Out</button>
-                  <input id="submit" class="details-submit" type="submit" value="Submit">
-                </div>
-              </div>
-            </form>
+            <label part="label" for="email">Email</label><br />
+            <div class="div-row">
+              <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }}>
+              <span id="error-client-name" class="error-client material-icons">priority_high</span>
+            </div>
             <br />
-            <br />  
-          </div>
+            <label part="label" for="reason">Reason</label><br />
+            <div class="div-row">
+              <input part="input" id="reason" type="text" @keyup=${() => { this.onKeyUp('reason'); }}/>
+              <span id="error-client-reason" class="error-client material-icons">priority_high</span>
+            </div>
+            <br />
+            <div class="div-row-userdetails-checkbox">
+              <label for="admin">Admin</label>
+              <input id="admin" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>    
+            </div>
+            <div class="div-row-userdetails-checkbox">
+              <label for="active">Active</label>
+              <input id="active" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>    
+            </div>
+
+            <div class="div-row-error div-row-submit">
+              <div part="errormsg" class="div-row-error-message"></div>
+            </div>
+            <div class="div-row-success div-row-submit success-userdetails">
+              <div part="successmsg" class="div-row-success-message"></div>
+            </div>
+
+            <div class="div-row-submit div-row-submit-userdetails">
+              <div class="loader-element"></div>
+              <div class="actions-container">
+                <button part="buttonprimary" id="logs" class="edit-item" @click=${() => { window.location.href = '#auth/logs/email/' + this.onArgs()[1] + '/0'; }}>View Logs</button>
+                <button part="buttonprimary" id="signout" class="edit-item" @click=${() => { window.location.href = '#auth/usersignout/' + this.onArgs()[1]; }}>Sign Out</button>
+                <input part="submit" id="submit" class="details-submit" type="submit" value="Submit">
+              </div>
+            </div>
+            
+          </form>
         </div>
       </div>
     `;
@@ -741,31 +762,33 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         else if (this.onArgs()[0] == 'usersignout') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-      <div class="SfUserAuthCAdmin">
-        <div class="search-container">
-          <div>
-            <div class="stats-container">
-              <h1>User Information</h1>
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild">
+          <div class="search-container">
+            <div>
+              <div class="stats-container">
+                <h1 part="title">User Information</h1>
+              </div>
+              <div class="stats-container">
+                <div part="badge" class="badge">Admin</div>
+              </div>
+              <br />
+              <div class="stats-container">
+                <div>User ${this.onArgs()[1]} is being signed out ...</div>
+              </div>
+              <div class="refresh-container">
+                <img .src=${this.logo} class="logo-refresh" />
+                <div class="lds-dual-ring-lg"></div>
+              </div>
+              <div class="div-row-error div-row-submit">
+                <div part="errormsg" class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit success-userdetails">
+                <div part="successmsg" class="div-row-success-message"></div>
+              </div>
+              <br />
+              <br />  
             </div>
-            <div class="stats-container">
-              <div class="badge">Admin</div>
-            </div>
-            <br />
-            <div class="stats-container">
-              <div>User ${this.onArgs()[1]} is being signed out ...</div>
-            </div>
-            <div class="refresh-container">
-              <img .src=${this.logo} class="logo-refresh" />
-              <div class="lds-dual-ring-lg"></div>
-            </div>
-            <div class="div-row-error div-row-submit">
-              <div class="div-row-error-message"></div>
-            </div>
-            <div class="div-row-success div-row-submit success-userdetails">
-              <div class="div-row-success-message"></div>
-            </div>
-            <br />
-            <br />  
           </div>
         </div>
       </div>
@@ -779,9 +802,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
 SfUserAuth.styles = css `
     
     .SfUserAuthC {
-      padding: 20px;
       background-color: var(--auth-background-color, none);
       color: var(--auth-color, #000);
+      display: flex;
+      justify-content: center;
     }
 
     .SfUserAuthCAdmin {
@@ -844,7 +868,7 @@ SfUserAuth.styles = css `
     }
 
     .div-row > input {
-      width: 150px;
+      flex-grow: 1;
     }
 
     .div-row > span {
@@ -887,6 +911,7 @@ SfUserAuth.styles = css `
     .div-row-submit input {
       font-size: 110%;
       font-weight: 800;
+      flex-grow: 1;
     }
 
     .checkbox {
@@ -906,6 +931,8 @@ SfUserAuth.styles = css `
       padding: 5px;
       background-color: white;
       border: dashed 1px red;
+      width: 100%;
+      text-align: center;
     }
 
     .div-row-success {
@@ -922,6 +949,8 @@ SfUserAuth.styles = css `
       padding: 5px;
       background-color: white;
       border: dashed 1px green;
+      width: 100%;
+      text-align: center;
     }
 
     .lds-dual-ring {
@@ -968,13 +997,13 @@ SfUserAuth.styles = css `
     }
 
     .link {
-      color: var(--auth-color, #000);
+      color: var(--auth-color, inherit);
       text-decoration: underline;
       cursor: pointer;
     }
 
     a {
-      color: var(--auth-color, #000);
+      color: var(--auth-color, inherit);
     }
 
     @keyframes lds-dual-ring {
@@ -1161,15 +1190,35 @@ SfUserAuth.styles = css `
       margin-right: 5px;
     }
 
+    .SfUserAuthCChild {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 30px;
+    }
 
     @media (orientation: landscape) {
 
-     
+     .SfUserAuthCChild {
+        width: 50%;
+      }
+
+      .SfUserAuthCChild form {
+        width: 40%;
+      }
 
     }
 
     @media (orientation: portrait) {
 
+      .SfUserAuthCChild {
+        width: 100%;
+      }
+
+      .SfUserAuthCChild form {
+        width: 80%;
+      }
       
 
     }
