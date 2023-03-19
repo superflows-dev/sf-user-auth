@@ -4,6 +4,7 @@ declare function readCookie(key: string): string;
 declare function callApi(url: string, data: string, authorization: any): Promise<unknown>;
 declare function goBack(): void;
 declare function goTo(path: string): void;
+declare function maskEmail(emailStr: string): string;
 declare const exportFunctions: {
     writeCookie: typeof writeCookie;
     readCookie: typeof readCookie;
@@ -11,6 +12,7 @@ declare const exportFunctions: {
     callApi: typeof callApi;
     goBack: typeof goBack;
     goTo: typeof goTo;
+    maskEmail: typeof maskEmail;
 };
 export default exportFunctions;
 //# sourceMappingURL=util.d.ts.map

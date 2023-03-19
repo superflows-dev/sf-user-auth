@@ -57,8 +57,19 @@ function goTo(path: string) {
     window.location.href = path;
 }
 
+function maskEmail(emailStr: string) {
+
+    const arrEmail = emailStr.split('@');
+    arrEmail[0] = (arrEmail[0] + "").substring(0, 1) + "x".repeat(arrEmail[0].length - 2) + (arrEmail[0] + "").substring(arrEmail[0].length - 1, arrEmail[0].length);
+    arrEmail[1] = (arrEmail[1] + "").substring(0, 1) + "x".repeat(arrEmail[1].length - 2) + (arrEmail[1] + "").substring(arrEmail[1].length - 1, arrEmail[1].length);
+
+    return arrEmail[0] + '@' + arrEmail[1];
+
+}
+
+
 const exportFunctions = {
-    writeCookie, readCookie, clearCookie, callApi, goBack, goTo
+    writeCookie, readCookie, clearCookie, callApi, goBack, goTo, maskEmail
 };
 
 export default exportFunctions;

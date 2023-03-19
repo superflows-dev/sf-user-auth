@@ -509,8 +509,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         <div class="SfUserAuthC">
           <div part="container" class="SfUserAuthCChild">
             <h1 part="title">Sign Up</h1>
-            <h4 part="subtitle">Let's create a new ${this.appName} account</h4>
             <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <h4 part="subtitle">Let's create a new ${this.appName} account</h4>
               <label part="label" for="name">Name</label><br />
               <div class="div-row">
                 <input part="input" id="name" type="text" @keyup=${() => { this.onKeyUp('name'); }}>
@@ -581,7 +581,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
           <div part="container" class="SfUserAuthCChild">
             <h1 part="title">Verify</h1>
             <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${this.onArgs()[1]}</strong></h4>
+              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.onArgs()[1])}</strong></h4>
               <label part="label" for="otp">OTP</label><br />
               <div class="div-row">
                 <input part="input" id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX" autofocus/>
@@ -803,14 +803,14 @@ SfUserAuth.styles = css `
     
     .SfUserAuthC {
       background-color: var(--auth-background-color, none);
-      color: var(--auth-color, #000);
+      color: var(--auth-color, inherit);
       display: flex;
       justify-content: center;
     }
 
     .SfUserAuthCAdmin {
       background-color: var(--auth-background-color, none);
-      color: var(--auth-color, #000);
+      color: var(--auth-color, inherit);
     }
 
     .badge {
