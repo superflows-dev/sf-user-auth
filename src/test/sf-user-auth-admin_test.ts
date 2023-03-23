@@ -117,11 +117,6 @@ const htmlContent = html `
 
 const TIMEOUT = 500;
 
-
-function getArgsAdmin () : string[] {
-    return ['admin']
-}
-
 suite('sf-user-auth > Admin tests', () => {
 
     test('is defined', () => {
@@ -135,9 +130,10 @@ suite('sf-user-auth > Admin tests', () => {
         //     resolve({status: 200, responseText: JSON.stringify({result: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}}})});
         // }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/admin'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

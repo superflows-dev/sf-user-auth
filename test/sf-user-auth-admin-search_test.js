@@ -121,9 +121,6 @@ var clickEvent = new MouseEvent("click", {
     "bubbles": true,
     "cancelable": false
 });
-function getArgsAdmin() {
-    return ['admin'];
-}
 suite('sf-user-auth > Admin tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -131,9 +128,11 @@ suite('sf-user-auth > Admin tests', () => {
     });
     test('refresh tests', async () => {
         stub(Util, 'goTo').returns();
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/admin';
+        await new Promise((r) => setTimeout(r, TIMEOUT));
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const badgeAdmin = el.shadowRoot.querySelectorAll('.badge')[0];
         assert.ok(badgeAdmin.outerHTML.indexOf('Admin') >= 0);

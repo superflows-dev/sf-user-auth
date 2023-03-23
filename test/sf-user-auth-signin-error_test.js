@@ -121,9 +121,6 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
 });
 const TIMEOUT = 500;
-function getArgsSignIn() {
-    return ['signin'];
-}
 suite('sf-user-auth > Basic tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -133,9 +130,10 @@ suite('sf-user-auth > Basic tests', () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
             resolve({ status: 404, responseText: JSON.stringify({ result: false, error: "Account does not exist!" }) });
         }));
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign In') >= 0);

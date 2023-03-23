@@ -1,32 +1,48 @@
-<div class="cContainer">
-    <sf-user-auth id="sf_auth" appName="Superflows" apiId="n8u090tti7" logo="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png">
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>&lt;sf-user-auth> Demo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google fonts integration -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/lit/polyfill-support.js"></script>
+    <script type="module" src="../sf-user-auth.js"></script>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+
+    <br /><br />
+    <div class="logo-container">
+        <a href="index.html"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png" /></a>
+    </div>
+
+    <div class="auth">
+      <sf-user-auth id="sf_auth" appName="Superflows" apiId="shgxfknp91" logo="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png">
         <div slot="privacy">
             <p>Privacy policy goes here
         </div>
         <div slot="terms">
             <p>Terms & Conditions go here
         </div>
-    </sf-user-auth>
-</div>
-<script>
+      </sf-user-auth>
+    </div>
 
-    var accessToken;
+    <script>
 
-    document.querySelector('#sf_auth').onArgs = getCurrentArgs;
-    document.getElementsByTagName('sf-user-auth')[0].addEventListener('accessTokenReceived', (e) => {
-        console.log('access token received ', e.detail);
-        accessToken = e.detail.accessToken.token;
-        if(e.detail.admin) {
-            insertSignInSfNavMenuForAdmin();
-        } else {
-            insertSignInSfNavMenu();
-        }
-        
-        //console.log('setting hash');
+      document.getElementsByTagName('sf-user-auth')[0].addEventListener('accessTokenReceived', (e) => {
+          window.location.href='index.html';
 
-    })
-    document.getElementsByTagName('sf-user-auth')[0].addEventListener('signedOut', (e) => {
-        console.log('received signout');
-        insertSignOutSfNavMenu();
-    })
-</script>
+      })
+      document.getElementsByTagName('sf-user-auth')[0].addEventListener('signedOut', (e) => {
+          window.location.href="auth.html#auth/signin";
+      })
+
+    </script>
+  </body>
+</html>

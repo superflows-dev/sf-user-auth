@@ -125,10 +125,6 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
   });
 
-function getArgsAdmin () : string[] {
-    return [ 'userdetails','hrushi.mehendale@gmail.com']
-}
-
 suite('sf-user-auth > Admin tests', () => {
 
     test('is defined', () => {
@@ -142,9 +138,10 @@ suite('sf-user-auth > Admin tests', () => {
             resolve({status: 200, responseText: JSON.stringify({"result":true,"data":{"values":{"refreshTokens":[{"M":{"token":{"S":"lf6dz4u271g8bunsjs4"},"expiry":{"S":"1681277452361"}}},{"M":{"token":{"S":"lf6dz5xg8ur5u7t41uq"},"expiry":{"S":"1681277453764"}}}],"admin":true,"otp":[],"accessTokens":[{"M":{"token":{"S":"lf6dz5xgikzz5rkk0vr"},"expiry":{"S":"1679290253764"}}}],"email":"hrushi.mehendale@gmail.com","name":"Administrator","otpTime":"1678685424001"}}})});
         }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/userdetails/hrushi.mehendale@gmail.com';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

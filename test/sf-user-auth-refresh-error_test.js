@@ -116,9 +116,6 @@ const htmlContent = html `
 </sf-user-auth>
       `;
 const TIMEOUT = 500;
-function getArgsRefresh() {
-    return ['refresh', 'hrushi.mehendale@gmail.com'];
-}
 suite('sf-user-auth > Basic tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -128,9 +125,11 @@ suite('sf-user-auth > Basic tests', () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
             resolve({ status: 400, responseText: JSON.stringify({ result: false, error: "Malformed headers!" }) });
         }));
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsRefresh;
+        window.location.href = window.location.href + '#auth/refresh/email/hrushi.mehendale@gmail.com';
+        await new Promise((r) => setTimeout(r, TIMEOUT));
         await new Promise((r) => setTimeout(r, TIMEOUT));
         assert.ok(window.location.hash.indexOf('signin') <= 0);
     });

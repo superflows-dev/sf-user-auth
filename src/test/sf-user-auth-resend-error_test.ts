@@ -124,10 +124,6 @@ var clickEvent = new MouseEvent("click", {
       
 const TIMEOUT = 500;
 
-function getArgsVerify () : string[] {
-    return ['verify', 'hrushi.mehendale@gmail.com']
-}
-
 suite('sf-user-auth > Basic tests', () => {
 
     test('is defined', () => {
@@ -143,9 +139,10 @@ suite('sf-user-auth > Basic tests', () => {
         
         stub(Util, 'writeCookie').returns();
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

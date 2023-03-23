@@ -116,9 +116,6 @@ const htmlContent = html `
 </sf-user-auth>
       `;
 const TIMEOUT = 500;
-function getArgsAdmin() {
-    return ['logs', 'email', 'hrushi.mehendale@gmail.com', '0'];
-}
 suite('sf-user-auth > Admin tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -128,9 +125,11 @@ suite('sf-user-auth > Admin tests', () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
             resolve({ status: 200, responseText: JSON.stringify({ "result": true, "data": { "values": [], "pages": 1 } }) });
         }));
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/logs/email/hrushi.mehendale@gmail.com/0';
+        await new Promise((r) => setTimeout(r, TIMEOUT));
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const back = el.shadowRoot.querySelectorAll('.link')[0];
         assert.ok(back.outerHTML.indexOf('back to') >= 0);

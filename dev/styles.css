@@ -1,0 +1,25 @@
+
+body {
+    background-color: #efefef;
+    margin: 0px;
+    font-family: 'Source Sans Pro';
+}
+
+.ui-container {
+
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-container img {
+    height: 80px;
+}

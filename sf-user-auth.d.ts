@@ -18,7 +18,7 @@ export declare class SfUserAuth extends LitElement {
     offset: number;
     otp: string;
     pageBlock: number;
-    onArgs: () => string[];
+    arrHash: string[];
     _SfUserAuthEmail: any;
     _SfUserAuthName: any;
     _SfUserAuthOtp: any;

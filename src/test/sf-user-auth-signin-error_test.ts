@@ -124,9 +124,6 @@ var clickEvent = new MouseEvent("click", {
 
 const TIMEOUT = 500;
 
-function getArgsSignIn () : string[] {
-    return ['signin']
-}
 
 suite('sf-user-auth > Basic tests', () => {
 
@@ -141,9 +138,10 @@ suite('sf-user-auth > Basic tests', () => {
             resolve({status: 404, responseText: JSON.stringify({result: false, error: "Account does not exist!"})});
         }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

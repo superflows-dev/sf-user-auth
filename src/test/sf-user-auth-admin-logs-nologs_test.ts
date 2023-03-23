@@ -120,10 +120,6 @@ const htmlContent = html `
 const TIMEOUT = 500;
 
 
-function getArgsAdmin () : string[] {
-    return ['logs', 'email', 'hrushi.mehendale@gmail.com','0'];
-}
-
 suite('sf-user-auth > Admin tests', () => {
 
     test('is defined', () => {
@@ -137,11 +133,12 @@ suite('sf-user-auth > Admin tests', () => {
             resolve({status: 200, responseText: JSON.stringify({"result":true,"data":{"values":[],"pages":1}})});
         }));  
 
-        
-
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/logs/email/hrushi.mehendale@gmail.com/0';
+
+        await new Promise((r) => setTimeout(r, TIMEOUT)); 
 
         await new Promise((r) => setTimeout(r, TIMEOUT)); 
 

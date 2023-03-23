@@ -124,10 +124,6 @@ var clickEvent = new MouseEvent("click", {
       
 const TIMEOUT = 500;
 
-function getArgsVerify () : string[] {
-    return ['verify', 'hrushi.mehendale@gmail.com']
-}
-
 suite('sf-user-auth > Basic tests', () => {
 
     test('is defined', () => {
@@ -138,14 +134,15 @@ suite('sf-user-auth > Basic tests', () => {
     test('verify tests', async () => {
 
         stub(Util, 'callApi').returns( new Promise((resolve) => {
-            resolve({status: 200, responseText: JSON.stringify({result: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, refreshToken: {token: "asdasdasd", expiry: 2323434}}})});
+            resolve({status: 200, responseText: JSON.stringify({result: true, admin: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, refreshToken: {token: "asdasdasd", expiry: 2323434}, accessToken: {token: "asdasdasd", expiry: 2323434}}})});
         }));
         
         stub(Util, 'writeCookie').returns();
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

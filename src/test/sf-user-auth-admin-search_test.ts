@@ -126,10 +126,6 @@ var clickEvent = new MouseEvent("click", {
   });
 
 
-function getArgsAdmin () : string[] {
-    return ['admin']
-}
-
 suite('sf-user-auth > Admin tests', () => {
 
     test('is defined', () => {
@@ -140,10 +136,12 @@ suite('sf-user-auth > Admin tests', () => {
     test('refresh tests', async () => {
 
         stub(Util, 'goTo').returns();  
-
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/admin';
+
+        await new Promise((r) => setTimeout(r, TIMEOUT)); 
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

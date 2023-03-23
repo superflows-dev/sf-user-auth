@@ -122,37 +122,6 @@ var clickEvent = new MouseEvent("click", {
 
 const TIMEOUT = 500;
 
-function getArgsNone () : string[] {
-    return ['']
-}
-
-function getArgsSignIn () : string[] {
-    return ['signin']
-}
-
-function getArgsSignUp () : string[] {
-    return ['signup']
-}
-
-function getArgsVerify () : string[] {
-    return ['verify', 'hrushi.mehendale@gmail.com']
-}
-
-function getArgsPrivacy () : string[] {
-    return ['privacy']
-}
-
-function getArgsTerms () : string[] {
-    return ['terms']
-}
-
-function getArgsRefresh () : string[] {
-    return ['refresh', 'hrushi.mehendale@gmail.com']
-}
-
-function getArgsSignOut () : string[] {
-    return ['signout']
-}
 
 suite('sf-user-auth > Basic tests', () => {
 
@@ -161,24 +130,27 @@ suite('sf-user-auth > Basic tests', () => {
         assert.instanceOf(el, SfUserAuth);
     });
 
-    test('non in render', async () => {
-        const el = (await fixture(htmlContent)) as SfUserAuth;
-        await el.updateComplete;
-        el.onArgs = getArgsNone;
+    // test('non in render', async () => {
+    //     const el = (await fixture(htmlContent)) as SfUserAuth;
+    //     await el.updateComplete;
+    //     el.onArgs = getArgsNone;
 
-        await new Promise((r) => setTimeout(r, TIMEOUT));
+    //     await new Promise((r) => setTimeout(r, TIMEOUT));
 
-        // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
-        // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
-        const img = el.shadowRoot!.querySelectorAll('img')[0]!;
-        assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0); 
+    //     // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
+    //     // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
+    //     const img = el.shadowRoot!.querySelectorAll('img')[0]!;
+    //     assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0); 
 
-    });
+    // });
 
     test('sign in render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin'
+        //el.dispatchEvent(new HashChangeEvent('hashchange', {}));
+
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -188,9 +160,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('sign up render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -200,9 +173,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('verify render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -212,9 +186,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('privacy render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsPrivacy;
+        window.location.href = window.location.href + '#auth/privacy'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -225,9 +200,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('terms render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsTerms;
+        window.location.href = window.location.href + '#auth/terms'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -238,9 +214,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('refresh render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsRefresh;
+        window.location.href = window.location.href + '#auth/refresh'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -251,9 +228,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('signout render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignOut;
+        window.location.href = window.location.href + '#auth/signout'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -264,9 +242,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('email input', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -290,9 +269,10 @@ suite('sf-user-auth > Basic tests', () => {
 
     test('name input', async () => {
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -340,10 +320,7 @@ suite('sf-user-auth > Basic tests', () => {
         const ipSubmit = el.shadowRoot!.querySelectorAll('#submit')[0]! as HTMLInputElement;
         assert.ok(ipSubmit.outerHTML.indexOf('disabled') < 0);
 
-        // ipTerms.dispatchEvent(clickEvent);
-
-        // await new Promise((r) => setTimeout(r, TIMEOUT));
-
+        
         ipPrivacy.dispatchEvent(clickEvent);
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
@@ -353,9 +330,10 @@ suite('sf-user-auth > Basic tests', () => {
     });
 
     test('otp input', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com'
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 

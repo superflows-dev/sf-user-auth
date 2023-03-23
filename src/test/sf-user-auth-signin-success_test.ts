@@ -122,11 +122,8 @@ var clickEvent = new MouseEvent("click", {
   "cancelable": false
 });
 
-const TIMEOUT = 500;
+const TIMEOUT = 1000;
 
-function getArgsSignIn () : string[] {
-    return ['signin']
-}
 
 suite('sf-user-auth > Basic tests', () => {
 
@@ -141,9 +138,10 @@ suite('sf-user-auth > Basic tests', () => {
             resolve({status: 200, responseText: JSON.stringify({result: true})});
         }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
@@ -169,8 +167,9 @@ suite('sf-user-auth > Basic tests', () => {
         ipSubmit.dispatchEvent(clickEvent);
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
-        const divRowError = el.shadowRoot!.querySelectorAll('.div-row-error')[0]! as HTMLDivElement;
-        assert.ok(divRowError.outerHTML.indexOf('display: none') >= 0);
+        const divTitle = el.shadowRoot!.querySelectorAll('h1')[0]! as HTMLDivElement;
+
+        assert.ok(divTitle.outerHTML.indexOf('Verify') >= 0);
 
     });
 

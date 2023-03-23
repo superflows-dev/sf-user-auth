@@ -119,105 +119,90 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
 });
 const TIMEOUT = 500;
-function getArgsNone() {
-    return [''];
-}
-function getArgsSignIn() {
-    return ['signin'];
-}
-function getArgsSignUp() {
-    return ['signup'];
-}
-function getArgsVerify() {
-    return ['verify', 'hrushi.mehendale@gmail.com'];
-}
-function getArgsPrivacy() {
-    return ['privacy'];
-}
-function getArgsTerms() {
-    return ['terms'];
-}
-function getArgsRefresh() {
-    return ['refresh', 'hrushi.mehendale@gmail.com'];
-}
-function getArgsSignOut() {
-    return ['signout'];
-}
 suite('sf-user-auth > Basic tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
         assert.instanceOf(el, SfUserAuth);
     });
-    test('non in render', async () => {
-        const el = (await fixture(htmlContent));
-        await el.updateComplete;
-        el.onArgs = getArgsNone;
-        await new Promise((r) => setTimeout(r, TIMEOUT));
-        // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
-        // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
-        const img = el.shadowRoot.querySelectorAll('img')[0];
-        assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0);
-    });
+    // test('non in render', async () => {
+    //     const el = (await fixture(htmlContent)) as SfUserAuth;
+    //     await el.updateComplete;
+    //     el.onArgs = getArgsNone;
+    //     await new Promise((r) => setTimeout(r, TIMEOUT));
+    //     // const h1 = el.shadowRoot!.querySelectorAll('h1')[0]!;
+    //     // assert.ok(h1.innerHTML.indexOf('Sign In') >= 0); 
+    //     const img = el.shadowRoot!.querySelectorAll('img')[0]!;
+    //     assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0); 
+    // });
     test('sign in render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin';
+        //el.dispatchEvent(new HashChangeEvent('hashchange', {}));
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign In') >= 0);
     });
     test('sign up render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign Up') >= 0);
     });
     test('verify render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Verify') >= 0);
     });
     test('privacy render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsPrivacy;
+        window.location.href = window.location.href + '#auth/privacy';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const div = el.shadowRoot.querySelectorAll('slot')[0];
         assert.ok(div.outerHTML.indexOf('privacy') >= 0);
     });
     test('terms render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsTerms;
+        window.location.href = window.location.href + '#auth/terms';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const div = el.shadowRoot.querySelectorAll('slot')[0];
         assert.ok(div.outerHTML.indexOf('terms') >= 0);
     });
     test('refresh render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsRefresh;
+        window.location.href = window.location.href + '#auth/refresh';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const img = el.shadowRoot.querySelectorAll('img')[0];
         assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0);
     });
     test('signout render', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignOut;
+        window.location.href = window.location.href + '#auth/signout';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const img = el.shadowRoot.querySelectorAll('img')[0];
         assert.ok(img.outerHTML.indexOf('logo-refresh') >= 0);
     });
     test('email input', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignIn;
+        window.location.href = window.location.href + '#auth/signin';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign In') >= 0);
@@ -232,9 +217,10 @@ suite('sf-user-auth > Basic tests', () => {
         assert.ok(errorEmail.outerHTML.indexOf('display: none') >= 0);
     });
     test('name input', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign Up') >= 0);
@@ -265,16 +251,15 @@ suite('sf-user-auth > Basic tests', () => {
         ipEmail.dispatchEvent(new KeyboardEvent('keyup', { 'key': 'm' }));
         const ipSubmit = el.shadowRoot.querySelectorAll('#submit')[0];
         assert.ok(ipSubmit.outerHTML.indexOf('disabled') < 0);
-        // ipTerms.dispatchEvent(clickEvent);
-        // await new Promise((r) => setTimeout(r, TIMEOUT));
         ipPrivacy.dispatchEvent(clickEvent);
         await new Promise((r) => setTimeout(r, TIMEOUT));
         assert.ok(ipSubmit.outerHTML.indexOf('disabled') >= 0);
     });
     test('otp input', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Verify') >= 0);

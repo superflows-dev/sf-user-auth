@@ -19,11 +19,12 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.eventSignedOut = 'signedOut';
         this.search = "";
         this.offset = 0;
-        this.onArgs = () => { return []; };
+        this.arrHash = window.location.hash.split("/").splice(1);
         this.signOut = () => {
             Util.clearCookie('refreshToken');
             Util.clearCookie('accessToken');
             Util.clearCookie('email');
+            Util.clearCookie('admin');
             const event = new CustomEvent(this.eventSignedOut, { detail: {}, bubbles: true, composed: true });
             this.dispatchEvent(event);
             //window.location.hash = '#auth/signin';
@@ -94,53 +95,6 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 htmlStr = '<div class="no-records">No records found</div>';
             }
             this._SfUserAuthTableContainer.innerHTML = htmlStr;
-            // if(data.length > 0) {
-            //   htmlStr = '<div class="pages-label">Pages</div>';
-            //   if(pages < 5) {
-            //     for(var i = 1; i<= pages; i++) {
-            //       // if(this.onArgs()[1] == null && i === 0) {
-            //       //   htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
-            //       // } else 
-            //       if(this.onArgs()[3] != null && parseInt(this.onArgs()[3])/this.pageBlock === i-1) {
-            //         htmlStr += '<div class="pages-item-current"><strong>'+i+'</strong></div>'
-            //       } 
-            //       else {
-            //         if(this.search.length > 0) {
-            //           htmlStr += '<div class="pages-item"><a href="#auth/logs/'+this.onArgs()[1]+'/'+this.onArgs()[2]+'/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
-            //         } else {
-            //           htmlStr += '<div class="pages-item"><a href="#auth/logs/_/_/'+((i)-1)*this.pageBlock+'">'+i+`</a></div>`;
-            //         }
-            //       }
-            //     }
-            //   } else {
-            //     var setFilter = this.onArgs()[1];
-            //     var setSearch = this.onArgs()[2];
-            //     if(parseInt(this.onArgs()[3])/this.pageBlock === 0) {
-            //       htmlStr += '<div class="pages-item-current"><strong>1</strong></div>'
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(1)*this.pageBlock+'">2</a></div>';
-            //       htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
-            //     } else if(parseInt(this.onArgs()[3])/this.pageBlock === (pages - 1)) {
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
-            //       htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-2)*this.pageBlock+'">'+(pages-1)+`</a></div>`;
-            //       htmlStr += '<div class="pages-item-current"><strong>'+(pages)+`</strong></div>`;
-            //     } else {
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/0">'+(1)+`</a></div>`;
-            //       if( (parseInt(this.onArgs()[3]))/this.pageBlock !== 1 ) {
-            //         htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-            //         htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) - this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock)+`</a></div>`;
-            //       }
-            //       htmlStr += '<div class="pages-item-current"><strong>'+((parseInt(this.onArgs()[3]))/this.pageBlock + 1)+`</strong></div>`;
-            //       if( (parseInt(this.onArgs()[3]))/this.pageBlock !== (pages - 2) ) {
-            //         htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+(parseInt(this.onArgs()[3]) + this.pageBlock)+'">'+((parseInt(this.onArgs()[3]))/this.pageBlock + 2)+`</a></div>`;
-            //         htmlStr += '<div class="pages-item-current">&nbsp;.&nbsp;.&nbsp;</div>';
-            //       }
-            //       htmlStr += '<div class="pages-item"><a href="#auth/logs/'+setFilter+'/'+setSearch+'/'+((pages)-1)*this.pageBlock+'">'+(pages)+`</a></div>`;
-            //     }
-            //   }
-            //   this._SfUserAuthPagesContainer.innerHTML = htmlStr;  
-            // }
         };
         this.insertUserDetailHTML = (data) => {
             this._SfUserAuthEmail.value = data.email;
@@ -184,7 +138,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.onResendSubmit = async () => {
             this.clearMessages();
-            const xhr = (await this.prepareXhr({ "email": this.onArgs()[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null));
+            const xhr = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null));
             this._SfUserAuthLoader.innerHTML = '';
             if (xhr.status == 200) {
                 this.setSuccess('Verification email sent again successfully!');
@@ -196,7 +150,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.onFormSubmit = async () => {
             this.clearMessages();
-            if (this.onArgs()[0] == 'signup') {
+            if (this.arrHash[0] == 'signup') {
                 const xhr = (await this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signup", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
@@ -207,7 +161,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this.setError(jsonRespose.error);
                 }
             }
-            else if (this.onArgs()[0] == 'signin') {
+            else if (this.arrHash[0] == 'signin') {
                 const xhr = (await this.prepareXhr({ "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signin", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
@@ -218,8 +172,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this.setError(jsonRespose.error);
                 }
             }
-            else if (this.onArgs()[0] == 'verify') {
-                const xhr = (await this.prepareXhr({ "email": this.onArgs()[1], "otp": this.otp }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/verify", this._SfUserAuthLoader, null));
+            else if (this.arrHash[0] == 'verify') {
+                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/verify", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     this.setSuccess('Verification successful!');
@@ -228,16 +182,16 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     const email = jsonRespose.data.email.S;
                     Util.writeCookie('refreshToken', refreshToken);
                     Util.writeCookie('email', email);
-                    window.location.hash = '#auth/refresh/' + this.onArgs()[1];
+                    window.location.hash = '#auth/refresh/' + this.arrHash[1];
                 }
                 else {
                     const jsonRespose = JSON.parse(xhr.responseText);
                     this.setError(jsonRespose.error);
                 }
             }
-            else if (this.onArgs()[0] == 'userdetails') {
+            else if (this.arrHash[0] == 'userdetails') {
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-                const xhr = (await this.prepareXhr({ "email": this.onArgs()[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/updateuser", this._SfUserAuthLoader, authorization));
+                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/updateuser", this._SfUserAuthLoader, authorization));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     this.setSuccess('Update successful!');
@@ -246,7 +200,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return false;
         };
         this.evalSubmit = () => {
-            if (this.onArgs()[0] == 'signup') {
+            if (this.arrHash[0] == 'signup') {
                 if (this.validateName(this._SfUserAuthName.value) && this.validateEmail(this._SfUserAuthEmail.value) && this.validateTerms() && this.validatePrivacy()) {
                     this._SfUserAuthSubmit.disabled = false;
                 }
@@ -254,7 +208,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this._SfUserAuthSubmit.disabled = true;
                 }
             }
-            else if (this.onArgs()[0] == 'signin') {
+            else if (this.arrHash[0] == 'signin') {
                 if (this.validateEmail(this._SfUserAuthEmail.value)) {
                     this._SfUserAuthSubmit.disabled = false;
                 }
@@ -262,7 +216,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this._SfUserAuthSubmit.disabled = true;
                 }
             }
-            else if (this.onArgs()[0] == 'verify') {
+            else if (this.arrHash[0] == 'verify') {
                 if (this.validateOtp(this._SfUserAuthOtp.value)) {
                     this._SfUserAuthSubmit.disabled = false;
                 }
@@ -270,7 +224,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this._SfUserAuthSubmit.disabled = true;
                 }
             }
-            else if (this.onArgs()[0] == 'admin') {
+            else if (this.arrHash[0] == 'admin') {
                 if (this.validateEmail(this._SfUserAuthSearch.value)) {
                     this._SfUserAuthSearchSubmit.disabled = false;
                 }
@@ -350,7 +304,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             Util.goBack();
         };
         this.onSearchClick = () => {
-            if (this.onArgs()[0] == 'admin') {
+            if (this.arrHash[0] == 'admin') {
                 Util.goTo('#auth/userdetails/' + this.search);
             }
         };
@@ -359,22 +313,22 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.copySlots = () => {
         };
         this.initState = async () => {
-            if (this.onArgs()[0] == 'userdetails') {
+            if (this.arrHash[0] == 'userdetails') {
                 // if(this._SfUserAuthEmail != null) {
                 //   console.log('not null');
                 //   if(this._SfUserAuthEmail.value.length === 0) {
                 //   }
                 // }
-                await this.fetchUserDetails(this.onArgs()[1]);
+                await this.fetchUserDetails(this.arrHash[1]);
             }
             this.pageBlock = 100;
-            if (this.onArgs()[0] == 'logs') {
-                this.fetchLogs(parseInt(this.onArgs()[3]), this.onArgs()[1], this.onArgs()[2]);
+            if (this.arrHash[0] == 'logs') {
+                this.fetchLogs(parseInt(this.arrHash[3]), this.arrHash[1], this.arrHash[2]);
             }
-            if (this.onArgs()[0] == 'usersignout') {
-                this.fetchSignout(this.onArgs()[1]);
+            if (this.arrHash[0] == 'usersignout') {
+                this.fetchSignout(this.arrHash[1]);
             }
-            if (this.onArgs()[0] == 'refresh') {
+            if (this.arrHash[0] == 'refresh') {
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
                 const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
                 if (xhr.status == 200) {
@@ -382,6 +336,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
                     Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
                     Util.writeCookie('email', jsonRespose.data.email.S);
+                    Util.writeCookie('admin', jsonRespose.admin.BOOL);
                     const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
                     this.dispatchEvent(event);
                 }
@@ -389,7 +344,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this.signOut();
                 }
             }
-            if (this.onArgs()[0] == 'signout') {
+            if (this.arrHash[0] == 'signout') {
                 this.signOut();
             }
         };
@@ -429,7 +384,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             else {
                 let body = { "offset": offset + "", "limit": this.pageBlock + "" };
-                if (this.onArgs()[2].length > 1) {
+                if (this.arrHash[2].length > 1) {
                     body = { "offset": offset + "", "limit": this.pageBlock + "", "filterKey": filterKey + "", "filterString": filterString };
                 }
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
@@ -445,11 +400,16 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
         };
     }
+    ;
     firstUpdated(_changedProperties) {
         this.copySlots();
         this.decorateSlots();
         this.initListeners();
         this.initState();
+        window.onhashchange = () => {
+            const hashValue = window.location.hash;
+            this.arrHash = hashValue.split("/").splice(1);
+        };
     }
     connectedCallback() {
         super.connectedCallback();
@@ -500,10 +460,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     }
     render() {
         this.initState();
-        if (this.onArgs() == null || this.onArgs().length === 0) {
+        if (this.arrHash == null || this.arrHash.length === 0) {
             return this.getUiRefresh();
         }
-        else if (this.onArgs()[0] == 'signup') {
+        else if (this.arrHash[0] == 'signup') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
         <div class="SfUserAuthC">
@@ -549,7 +509,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         </div>
       `;
         }
-        else if (this.onArgs()[0] == 'terms') {
+        else if (this.arrHash[0] == 'terms') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
@@ -560,7 +520,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         </div>
       `;
         }
-        else if (this.onArgs()[0] == 'privacy') {
+        else if (this.arrHash[0] == 'privacy') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
@@ -571,17 +531,17 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         </div>
       `;
         }
-        else if (this.onArgs()[0] == 'signin') {
+        else if (this.arrHash[0] == 'signin') {
             return this.getUiSignIn();
         }
-        else if (this.onArgs()[0] == 'verify') {
+        else if (this.arrHash[0] == 'verify') {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
           <div part="container" class="SfUserAuthCChild">
             <h1 part="title">Verify</h1>
             <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.onArgs()[1])}</strong></h4>
+              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong></h4>
               <label part="label" for="otp">OTP</label><br />
               <div class="div-row">
                 <input part="input" id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX" autofocus/>
@@ -604,10 +564,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         </div>
       `;
         }
-        else if (this.onArgs()[0] == 'refresh') {
+        else if (this.arrHash[0] == 'refresh') {
             return this.getUiRefresh();
         }
-        else if (this.onArgs()[0] == 'signout') {
+        else if (this.arrHash[0] == 'signout') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -620,7 +580,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       </div>
     `;
         }
-        else if (this.onArgs()[0] == 'admin') {
+        else if (this.arrHash[0] == 'admin') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -654,7 +614,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       </div>
     `;
         }
-        else if (this.onArgs()[0] == 'logs') {
+        else if (this.arrHash[0] == 'logs') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -667,7 +627,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
           </div>
           <br />
           <div class="stats-container">
-            <span class="link resend" .onclick=${this.onCancelUserDetails}>${'← back to ' + this.onArgs()[2]}</span>
+            <span class="link resend" .onclick=${this.onCancelUserDetails}>${'← back to ' + this.arrHash[2]}</span>
           </div>
           <br />
           <div class="search-container">
@@ -686,7 +646,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       </div>
     `;
         }
-        else if (this.onArgs()[0] == 'userdetails') {
+        else if (this.arrHash[0] == 'userdetails') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -748,8 +708,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             <div class="div-row-submit div-row-submit-userdetails">
               <div class="loader-element"></div>
               <div class="actions-container">
-                <button part="buttonprimary" id="logs" class="edit-item" @click=${() => { window.location.href = '#auth/logs/email/' + this.onArgs()[1] + '/0'; }}>View Logs</button>
-                <button part="buttonprimary" id="signout" class="edit-item" @click=${() => { window.location.href = '#auth/usersignout/' + this.onArgs()[1]; }}>Sign Out</button>
+                <button part="buttonprimary" id="logs" class="edit-item" @click=${() => { window.location.href = '#auth/logs/email/' + this.arrHash[1] + '/0'; }}>View Logs</button>
+                <button part="buttonprimary" id="signout" class="edit-item" @click=${() => { window.location.href = '#auth/usersignout/' + this.arrHash[1]; }}>Sign Out</button>
                 <input part="submit" id="submit" class="details-submit" type="submit" value="Submit">
               </div>
             </div>
@@ -759,7 +719,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
       </div>
     `;
         }
-        else if (this.onArgs()[0] == 'usersignout') {
+        else if (this.arrHash[0] == 'usersignout') {
             return html `
       <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
       <div class="SfUserAuthC">
@@ -774,7 +734,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
               </div>
               <br />
               <div class="stats-container">
-                <div>User ${this.onArgs()[1]} is being signed out ...</div>
+                <div>User ${this.arrHash[1]} is being signed out ...</div>
               </div>
               <div class="refresh-container">
                 <img .src=${this.logo} class="logo-refresh" />
@@ -1256,7 +1216,7 @@ __decorate([
 ], SfUserAuth.prototype, "pageBlock", void 0);
 __decorate([
     property()
-], SfUserAuth.prototype, "onArgs", void 0);
+], SfUserAuth.prototype, "arrHash", void 0);
 __decorate([
     query('#email')
 ], SfUserAuth.prototype, "_SfUserAuthEmail", void 0);

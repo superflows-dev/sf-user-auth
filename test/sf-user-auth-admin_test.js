@@ -114,9 +114,6 @@ const htmlContent = html `
 </sf-user-auth>
       `;
 const TIMEOUT = 500;
-function getArgsAdmin() {
-    return ['admin'];
-}
 suite('sf-user-auth > Admin tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -126,9 +123,10 @@ suite('sf-user-auth > Admin tests', () => {
         // stub(Util, 'callApi').returns( new Promise((resolve) => {
         //     resolve({status: 200, responseText: JSON.stringify({result: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}}})});
         // }));  
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/admin';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const badgeAdmin = el.shadowRoot.querySelectorAll('.badge')[0];
         assert.ok(badgeAdmin.outerHTML.indexOf('Admin') >= 0);

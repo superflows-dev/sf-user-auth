@@ -10,283 +10,88 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap" rel="stylesheet">
-    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../node_modules/lit/polyfill-support.js"></script>
-    <script type="module">
-        import {SfNav} from 'https://unpkg.com/sf-nav/sf-nav.js?module';
-    </script>
-    <script type="module" src="../sf-user-auth.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600&display=swap" rel="stylesheet">
-    <style>
-       
-      body {
-        background-color: #efefef;
-        margin: 0px;
-        font-family: 'Source Sans Pro';
-      }
-
-      .cContainer {
-        margin: 20px;
-        /* padding: 20px; */
-        /* border: dashed 1px gray; */
-        /* background-color: rgb(4, 135, 205); */
-      }
-
-      sf-nav:not(:defined) {
-        display: none;
-      }
-
-      sf-user-auth::part(title) {
-        border-bottom: solid 10px black;
-        color: white;
-        text-align: left;
-      }
-
-      sf-user-auth::part(subtitle) {
-        text-align: center;
-      }
-
-      sf-user-auth::part(container) {
-        background-color: #444;
-        color: #ddd;
-      }
-
-      sf-user-auth::part(errormsg) {
-        background-color: black;
-      }
-
-      sf-user-auth::part(successmsg) {
-        background-color: black;
-      }
-
-      sf-user-auth::part(input) {
-        background-color: #333;
-        padding: 5px;
-        color: #fff;
-        border-left: solid 5px black;
-        border-right: none;
-        border-top: none;
-        border-bottom: none;
-      }
-
-      sf-user-auth::part(submit) {
-        background-image: none;
-        background-color: #333;
-        padding: 5px;
-        color: #fff;
-        border-radius: 3px;
-        border: none;
-        box-shadow: 3px 3px 0px black;
-      }
-
-      sf-user-auth::part(buttonprimary) {
-        background-image: none;
-        background-color: #222;
-        padding: 5px;
-        color: #fff;
-        border-radius: 3px;
-        border: none;
-        cursor: pointer;
-      }
-
-      sf-user-auth::part(submit):active {
-        background-color: #000;
-        box-shadow: 1px 1px 0px black;
-      }
-
-      sf-user-auth::part(badge) {
-        margin-top: -15px;
-        background-color: #000;
-        border: none;
-        font-size: 90%;
-      }
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="./util.js"></script>
   </head>
   <body>
 
-    <div id="nav-container">
-      <sf-nav id="sf-nav">
-          <!-- Set the brand name -->
-          <h2 slot="brandName"><a href="#home" >Superflows</a></h2>
-          <!-- Set the brand logo -->
-          <a slot="brandImage" href="#home" ><img alt="logo" src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png" /></a>
-          
-  
-          <!-- Page Content -->
-          <div slot="content">
-          </div>
-  
-          <!-- Call to action -->
-          <a slot="cta" href="#auth/signin">Sign In</a>
-  
-          <!-- Copyright notice -->
-          <p slot="copyright">Copyright 2022 Superflows</p>
-  
-          <!-- Set the social media links -->
-          <ul slot="socialMedia">
-              <li><a href="https://facebook.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/facebook-black_round.png" /></a></li>
-              <li><a href="https://twitter.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/twitter_black_round.png" /></a></li>
-              <li><a href="https://youtube.com"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/youtube_black_round.png" /></a></li>
-          </ul>
-  
-      </sf-nav>
+    <br /><br />
+    <div class="logo-container">
+        <a href="index.html"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png" /></a>
+    </div>
+    <div class="logo-container">
+      <h1>Sample Code For Project ABC</h1>
+    </div>
+
+    <div class="ui-container user">
+      <div><h4>You are signed in as</h4></div>
+      <div><h2 class="user-email"></h2></div>
+      <br />
+      <button onclick="signOut()">Sign Out</button>
+      <br />
+      <br />
+    </div>
+
+    <div class="ui-container admin">
+      <div><h4>You are signed in as</h4></div>
+      <div><h2 class="admin-email"></h2></div>
+      <br />
+      <button onclick="signOut()">Sign Out</button>
+      <br />
+      <div><a href="auth.html#auth/admin"><h3>Admin Console</h3></a></div>
+      <br />
+      <br />
+    </div>
+
+    <div class="ui-container auth">
+      <div><h4>You are not signed in</h4></div>
+      <button onclick="signIn()">Sign In</button>
     </div>
 
     <script>
 
-      //
-      // Navigation bar related Javascript
-      //
-
-      // Hash map for storing paths & arguments
-      var routeMap = [];
-
-      // Menu HTML to be inserted into sf-nav
-      const menu = `
-          <!-- Set the main menu -->
-          <ul slot="mainMenu">
-              <li><a href="#about">About</a></li>
-              <li class="li-solutions">
-                  <a href="javascript:void(0);" class="a-solutions">Solutions</a>
-                  <ul>
-                      <li><a href="#services">Services</a></li>
-                      <li><a href="#products">Products</a></li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="javascript:void(0);">Contact Us</a>
-                  <ul>
-                      <li><a href="https://instagram.com">Instagram</a></li>
-                      <li><a href="https://facebook.com">Facebook</a></li>
-                      <li><a href="https://youtube.com">YouTube</a></li>
-                  </ul>
-              </li>
-          </ul>
-      `;
-      
-      // Profile menu HTML to be inserted into sf-nav
-      const profileMenu = `
-          <ul id="profile-menu" slot="profileMenu">
-              <li>
-                  <a href="#auth/signout">Sign Out</a>
-              </li>
-          </ul>
-      `;
-
-      // Profile menu HTML to be inserted into sf-nav
-      const profileMenuAdmin = `
-          <ul id="profile-menu" slot="profileMenu">
-              <li>
-                  <a href="javascript:void(0);">Admin</a>
-                  <ul>
-                      <li><a href="#auth/admin">Authentication</a></li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="#auth/signout">Sign Out</a>
-              </li>
-          </ul>
-      `;
-
-      // Profile image HTML to be inserted into sf-nav
-      const profileImg = `
-          <img id="profile-img" alt="profile" slot="profilePicture" src="https://superflows-images.s3.ap-south-1.amazonaws.com/user.png" />
-      `;
-
-      // What's the current path?
-      function getCurrentPathName() {
-          return window.location.hash.length === 0 ? '' : window.location.hash.split("/")[0].replace('#', '');
+      function signOut() {
+        window.location.href = 'auth.html#auth/signout';
       }
 
-      // What are the current arguments?
-      function getCurrentArgs() {
-          return routeMap[getCurrentPathName() + '.html'];
+      function signIn() {
+        window.location.href = 'auth.html#auth/signin';
       }
 
-      // Initiate navigation bar listeners
-      function initiateListeners() {
-          document.getElementsByTagName('sf-nav')[0].addEventListener('searchClick', (e) => {console.log('hurray ' + JSON.stringify(e.detail));})
-          document.getElementsByTagName('sf-nav')[0].addEventListener('routeChange', (e) => {
-              routeMap[e.detail.pathName] = e.detail.args;
-          })
-      }
-      
-      // 
-      // Handling the authentication
-      // 
+      function init() {
 
-      // Initiate the menu (first load)
-      function insertSfNavMenu() {
-          const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
-          const newInnerHTML = currentInnerHTML + menu;
-          document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
-          initiateListeners();
+        const email = readCookie('email');
+        const admin = readCookie('admin');
+        
+        if(email == null || email.length == 0) {
           
-      }
+          document.querySelector('.auth').style.display = 'flex';
+          document.querySelector('.user').style.display = 'none';
+          document.querySelector('.admin').style.display = 'none';
+        
+        } else {
 
-      // Update the navigation bar after sign in successful
-      function insertSignInSfNavMenu() {
+          if(admin) {
 
-          window.location.hash='#home';
-          
-          setTimeout(() => {
-              const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
-              console.log(currentInnerHTML);
-              const newInnerHTML = currentInnerHTML + (currentInnerHTML.indexOf('profilePicture') < 0 ? profileImg : "") + menu + profileMenu;
-              document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
-              initiateListeners();    
-          }, 500);
-          
-      }
+            document.querySelector('.admin-email').innerHTML = email;
+            document.querySelector('.auth').style.display = 'none';
+            document.querySelector('.user').style.display = 'none';
+            document.querySelector('.admin').style.display = 'flex';
 
-      // Update the navigation bar after sign in successful
-      function insertSignInSfNavMenuForAdmin() {
+          } else {
 
-        window.location.hash='#home';
+            document.querySelector('.user-email').innerHTML = email;
+            document.querySelector('.auth').style.display = 'none';
+            document.querySelector('.user').style.display = 'flex';
+            document.querySelector('.admin').style.display = 'none';
 
-        setTimeout(() => {
-            const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
-            console.log(currentInnerHTML);
-            const newInnerHTML = currentInnerHTML + (currentInnerHTML.indexOf('profilePicture') < 0 ? profileImg : "") + menu + profileMenuAdmin;
-            document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
-            initiateListeners();    
-        }, 500);
+          }
 
         }
 
-      // Update the navigation bar after sign out successful
-      function insertSignOutSfNavMenu() {
-
-          window.location.hash='#home';
-
-          setTimeout(() => {
-
-              if(document.getElementById('profile-img') != null) {
-                  document.getElementById('profile-img').outerHTML = '';
-                  const currentInnerHTML = document.getElementsByTagName('sf-nav')[0].innerHTML;
-                  const newInnerHTML = currentInnerHTML + menu;
-                  document.getElementById('nav-container').innerHTML = '<sf-nav>'  + newInnerHTML + '</sf-nav>';
-                  initiateListeners();
-              }
-
-          }, 500);
-
-      }
-     
-      function initPage() {
-
-          console.log('init page');
-          insertSfNavMenu();
-          //window.location.href = '#auth/refresh';
-
       }
 
-      initPage();
+      init();
 
     </script>
   </body>

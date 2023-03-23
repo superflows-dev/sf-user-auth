@@ -121,9 +121,6 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
 });
 const TIMEOUT = 500;
-function getArgsSignUp() {
-    return ['signup'];
-}
 suite('sf-user-auth > Basic tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -133,9 +130,10 @@ suite('sf-user-auth > Basic tests', () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
             resolve({ status: 200, responseText: JSON.stringify({ result: true }) });
         }));
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Sign Up') >= 0);
@@ -170,8 +168,8 @@ suite('sf-user-auth > Basic tests', () => {
         // assert.ok(ipSubmit.outerHTML.indexOf('disabled') < 0);
         ipSubmit.dispatchEvent(clickEvent);
         await new Promise((r) => setTimeout(r, TIMEOUT));
-        const divRowError = el.shadowRoot.querySelectorAll('.div-row-error')[0];
-        assert.ok(divRowError.outerHTML.indexOf('display: none') >= 0);
+        const divTitle = el.shadowRoot.querySelectorAll('h1')[0];
+        assert.ok(divTitle.outerHTML.indexOf('Verify') >= 0);
     });
 });
 //# sourceMappingURL=sf-user-auth_test.js.map

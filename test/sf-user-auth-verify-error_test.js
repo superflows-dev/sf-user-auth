@@ -121,9 +121,6 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
 });
 const TIMEOUT = 500;
-function getArgsVerify() {
-    return ['verify', 'hrushi.mehendale@gmail.com'];
-}
 suite('sf-user-auth > Basic tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -134,9 +131,10 @@ suite('sf-user-auth > Basic tests', () => {
             resolve({ status: 404, responseText: JSON.stringify({ result: false, error: "Account does not exist!" }) });
         }));
         stub(Util, 'writeCookie').returns();
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsVerify;
+        window.location.href = window.location.href + '#auth/verify/hrushi.mehendale@gmail.com';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.innerHTML.indexOf('Verify') >= 0);

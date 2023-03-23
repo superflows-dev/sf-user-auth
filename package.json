@@ -1,7 +1,7 @@
 {
   "name": "sf-user-auth",
   "private": false,
-  "version": "1.0.78",
+  "version": "1.0.79",
   "description": "Superflows Navigation Component",
   "main": "sf-user-auth.js",
   "module": "sf-user-auth.js",

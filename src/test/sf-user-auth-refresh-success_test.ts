@@ -120,9 +120,6 @@ const htmlContent = html `
 const TIMEOUT = 500;
 
 
-function getArgsRefresh () : string[] {
-    return ['refresh', 'hrushi.mehendale@gmail.com']
-}
 
 suite('sf-user-auth > Basic tests', () => {
 
@@ -134,12 +131,15 @@ suite('sf-user-auth > Basic tests', () => {
     test('refresh tests', async () => {
 
         stub(Util, 'callApi').returns( new Promise((resolve) => {
-            resolve({status: 200, responseText: JSON.stringify({result: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}}})});
+            resolve({status: 200, responseText: JSON.stringify({result: true, admin: true, data: {name: {S: 'abc@gmail.com'}, email: {S: 'abc@gmail.com'}, accessToken: {token: "asdasd", expiry: 1212121}, refreshToken: {token: "asdasasd", expiry: 12312312}}})});
         }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsRefresh;
+        window.location.href = window.location.href + '#auth/refresh/hrushi.mehendale@gmail.com';
+
+        await new Promise((r) => setTimeout(r, TIMEOUT)); 
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
         assert.ok(window.location.hash.indexOf('signin') <= 0); 

@@ -6,7 +6,7 @@
 import { SfUserAuth } from '../sf-user-auth.js';
 import { fixture, assert } from '@open-wc/testing';
 // import {assert} from '@open-wc/testing';
-import { stub } from 'sinon';
+import { stub, restore } from 'sinon';
 import { html } from 'lit/static-html.js';
 import Util from '../util';
 
@@ -125,10 +125,6 @@ var clickEvent = new MouseEvent("click", {
     "cancelable": false
   });
 
-function getArgsAdmin () : string[] {
-    return [ 'userdetails','hrushi.mehendale@gmail.com']
-}
-
 suite('sf-user-auth > Admin tests', () => {
 
     test('is defined', () => {
@@ -138,15 +134,25 @@ suite('sf-user-auth > Admin tests', () => {
 
     test('admin tests', async () => {
 
+        stub(Util, 'callApi').returns( new Promise((resolve) => {
+            resolve({status: 200, responseText: JSON.stringify({"result":true,"data":{"values":{"refreshTokens":[{"M":{"token":{"S":"lf6dz4u271g8bunsjs4"},"expiry":{"S":"1681277452361"}}},{"M":{"token":{"S":"lf6dz5xg8ur5u7t41uq"},"expiry":{"S":"1681277453764"}}}],"admin":true,"otp":[],"accessTokens":[{"M":{"token":{"S":"lf6dz5xgikzz5rkk0vr"},"expiry":{"S":"1679290253764"}}}],"email":"hrushi.mehendale@gmail.com","name":null,"otpTime":"1678685424001","reason":"test reason","suspended":false}}})});
+        }));  
+
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/userdetails/hrushi.mehendale@gmail.com';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
+
+        restore();
 
         stub(Util, 'callApi').returns( new Promise((resolve) => {
             resolve({status: 200, responseText: JSON.stringify({"result":true})});
         }));  
+
+        
+        await new Promise((r) => setTimeout(r, TIMEOUT));
 
         const signout = el.shadowRoot!.querySelectorAll('#signout')[0]! as HTMLElement;
         signout.dispatchEvent(clickEvent);

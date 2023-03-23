@@ -114,18 +114,17 @@ const htmlContent = html `
 </sf-user-auth>
       `;
 const TIMEOUT = 500;
-function getArgsAdmin() {
-    return ['usersignout', 'hrushi.mehendale@gmail.com'];
-}
 suite('sf-user-auth > Admin tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
         assert.instanceOf(el, SfUserAuth);
     });
     test('admin tests', async () => {
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/usersignout/hrushi.mehendale@gmail.com';
+        await new Promise((r) => setTimeout(r, TIMEOUT));
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const searchC = el.shadowRoot.querySelectorAll('.search-container')[0];
         assert.ok(searchC.outerHTML.indexOf('is being signed out') >= 0);

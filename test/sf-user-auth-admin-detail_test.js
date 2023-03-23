@@ -121,9 +121,6 @@ var clickEvent = new MouseEvent("click", {
     "bubbles": true,
     "cancelable": false
 });
-function getArgsAdmin() {
-    return ['userdetails', 'hrushi.mehendale@gmail.com'];
-}
 suite('sf-user-auth > Admin tests', () => {
     test('is defined', () => {
         const el = document.createElement('sf-user-auth');
@@ -133,9 +130,10 @@ suite('sf-user-auth > Admin tests', () => {
         stub(Util, 'callApi').returns(new Promise((resolve) => {
             resolve({ status: 200, responseText: JSON.stringify({ "result": true, "data": { "values": { "refreshTokens": [{ "M": { "token": { "S": "lf6dz4u271g8bunsjs4" }, "expiry": { "S": "1681277452361" } } }, { "M": { "token": { "S": "lf6dz5xg8ur5u7t41uq" }, "expiry": { "S": "1681277453764" } } }], "admin": true, "otp": [], "accessTokens": [{ "M": { "token": { "S": "lf6dz5xgikzz5rkk0vr" }, "expiry": { "S": "1679290253764" } } }], "email": "hrushi.mehendale@gmail.com", "name": "Administrator", "otpTime": "1678685424001" } } }) });
         }));
+        window.location.hash = '';
         const el = (await fixture(htmlContent));
         await el.updateComplete;
-        el.onArgs = getArgsAdmin;
+        window.location.href = window.location.href + '#auth/userdetails/hrushi.mehendale@gmail.com';
         await new Promise((r) => setTimeout(r, TIMEOUT));
         const h1 = el.shadowRoot.querySelectorAll('h1')[0];
         assert.ok(h1.outerHTML.indexOf('User Information') >= 0);

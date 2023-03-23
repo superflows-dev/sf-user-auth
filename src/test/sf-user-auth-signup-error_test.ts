@@ -125,10 +125,6 @@ var clickEvent = new MouseEvent("click", {
 const TIMEOUT = 500;
 
 
-function getArgsSignUp () : string[] {
-    return ['signup']
-}
-
 suite('sf-user-auth > Basic tests', () => {
 
     test('is defined', () => {
@@ -142,9 +138,10 @@ suite('sf-user-auth > Basic tests', () => {
             resolve({status: 409, responseText: JSON.stringify({result: false, error: "Account already exists!"})});
         }));  
 
+        window.location.hash = '';
         const el = (await fixture(htmlContent)) as SfUserAuth;
         await el.updateComplete;
-        el.onArgs = getArgsSignUp;
+        window.location.href = window.location.href + '#auth/signup';
 
         await new Promise((r) => setTimeout(r, TIMEOUT));
 
