@@ -765,6 +765,7 @@ export class SfUserAuth extends LitElement {
       if(xhr.status == 200) {
         this.setSuccess('Verification successful!')
         const jsonRespose = JSON.parse(xhr.responseText);
+        console.log('verify log', jsonRespose);
         const refreshToken = jsonRespose.data.refreshToken.token;
         const email = jsonRespose.data.email.S;
         Util.writeCookie('refreshToken', refreshToken);
@@ -963,10 +964,11 @@ export class SfUserAuth extends LitElement {
       const xhr : any= (await this.prepareXhr(null, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization)) as any;
       if(xhr.status == 200) {
         const jsonRespose = JSON.parse(xhr.responseText);
+        console.log('jsonresponse', JSON.stringify(jsonRespose));
         Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
         Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
         Util.writeCookie('email', jsonRespose.data.email.S);
-        Util.writeCookie('admin', jsonRespose.admin.BOOL);
+        Util.writeCookie('admin', jsonRespose.admin);
         const event = new CustomEvent(this.eventAccessTokenReceived, {detail: {accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin}, bubbles: true, composed: true});
         this.dispatchEvent(event);
       } else {
@@ -977,6 +979,20 @@ export class SfUserAuth extends LitElement {
     
     if(this.arrHash[0] == 'signout') {
       this.signOut();
+    }
+
+    if(this.arrHash[0] == 'signin') {
+      setTimeout(() => {
+        (this._SfUserAuthEmail as HTMLInputElement)!.focus();
+      }, 500);
+      
+    }
+
+    if(this.arrHash[0] == 'verify') {
+      setTimeout(() => {
+        (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+      }, 500);
+      
     }
 
   }
@@ -1052,6 +1068,16 @@ export class SfUserAuth extends LitElement {
       const hashValue = window.location.hash;
       this.arrHash = hashValue.split("/").splice(1);
     } 
+
+    if(this.arrHash[0] == 'signin') {
+      (this._SfUserAuthEmail as HTMLInputElement).focus();
+    }
+
+    if(this.arrHash[0] == 'verify') {
+      (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+    }
+  
+
   }
   
   override connectedCallback() {
