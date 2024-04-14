@@ -339,8 +339,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
                     Util.writeCookie('email', jsonRespose.data.email.S);
                     Util.writeCookie('admin', jsonRespose.admin);
-                    const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
-                    this.dispatchEvent(event);
+                    setTimeout(() => {
+                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
+                        this.dispatchEvent(event);
+                    }, 2000);
                 }
                 else {
                     this.signOut();
