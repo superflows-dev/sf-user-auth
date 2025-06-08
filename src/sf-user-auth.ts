@@ -489,16 +489,16 @@ export class SfUserAuth extends LitElement {
   @property()
   search: string = "";
 
-  @property()
+  @property({type: Number})
   offset: number = 0;
 
   @property()
   otp!: string;
   
-  @property()
+  @property({type: Number})
   pageBlock!: number;
   
-  @property()
+  @property({type: Array})
   arrHash: string[] = window.location.hash.split("/").splice(1);;
 
   @query('#email')
@@ -509,6 +509,9 @@ export class SfUserAuth extends LitElement {
 
   @query('#otp')
   _SfUserAuthOtp: any;
+
+  @query('#otp-toggle')
+  _SfUserAuthOtpToggle: any;
 
   @query('#search')
   _SfUserAuthSearch: any;
@@ -582,6 +585,8 @@ export class SfUserAuth extends LitElement {
   @query('.pages-container')
   _SfUserAuthPagesContainer: any;
 
+  flagRefresh: boolean = false;
+
   signOut = () => {
     Util.clearCookie('refreshToken');
     Util.clearCookie('accessToken');
@@ -615,7 +620,7 @@ export class SfUserAuth extends LitElement {
   }
 
   validateOtp = (otp: string) => {
-    if((otp + "").length !== 4) {
+    if((otp + "").length !== 6) {
       return false;
     }
     return true;
@@ -721,7 +726,7 @@ export class SfUserAuth extends LitElement {
     
     this.clearMessages();
 
-    const xhr : any = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null)) as any;
+    const xhr : any = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://"+this.apiId+"/resend", this._SfUserAuthLoader, null)) as any;
     this._SfUserAuthLoader.innerHTML = '';
     if(xhr.status == 200) {
       this.setSuccess('Verification email sent again successfully!')
@@ -738,7 +743,7 @@ export class SfUserAuth extends LitElement {
 
     if(this.arrHash[0] == 'signup') {
 
-      const xhr : any= (await this.prepareXhr({ "name": this.name, "email": this.email },"https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/signup", this._SfUserAuthLoader, null)) as any;
+      const xhr : any= (await this.prepareXhr({ "name": this.name, "email": this.email },"https://"+this.apiId+"/signup", this._SfUserAuthLoader, null)) as any;
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         window.location.hash = '#auth/verify/' + this.email;
@@ -749,7 +754,7 @@ export class SfUserAuth extends LitElement {
      
     } else if(this.arrHash[0] == 'signin') {
 
-      const xhr : any= (await this.prepareXhr({ "email": this.email }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/signin", this._SfUserAuthLoader, null)) as any;
+      const xhr : any= (await this.prepareXhr({ "email": this.email }, "https://"+this.apiId+"/signin", this._SfUserAuthLoader, null)) as any;
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         window.location.hash = '#auth/verify/' + this.email;
@@ -760,7 +765,7 @@ export class SfUserAuth extends LitElement {
 
     } else if(this.arrHash[0] == 'verify') {
 
-      const xhr : any= (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/verify", this._SfUserAuthLoader, null)) as any;
+      const xhr : any= (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://"+this.apiId+"/verify", this._SfUserAuthLoader, null)) as any;
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         this.setSuccess('Verification successful!')
@@ -780,7 +785,7 @@ export class SfUserAuth extends LitElement {
     } else if(this.arrHash[0] == 'userdetails') {
 
       const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-      const xhr : any= (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/updateuser", this._SfUserAuthLoader, authorization)) as any;
+      const xhr : any= (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://"+this.apiId+"/updateuser", this._SfUserAuthLoader, authorization)) as any;
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         this.setSuccess('Update successful!')
@@ -936,8 +941,8 @@ export class SfUserAuth extends LitElement {
 
   }
 
-  initState = async () => {
-
+  initState = async (calling: number = 0) => {
+    
     if(this.arrHash[0] == 'userdetails') {
       // if(this._SfUserAuthEmail != null) {
       //   console.log('not null');
@@ -959,22 +964,26 @@ export class SfUserAuth extends LitElement {
     }
 
     if(this.arrHash[0] == 'refresh') {
-
-      const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
-      const xhr : any= (await this.prepareXhr(null, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization)) as any;
-      if(xhr.status == 200) {
-        const jsonRespose = JSON.parse(xhr.responseText);
-        console.log('jsonresponse', JSON.stringify(jsonRespose));
-        Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-        Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
-        Util.writeCookie('email', jsonRespose.data.email.S);
-        Util.writeCookie('admin', jsonRespose.admin);
-        setTimeout(() => {
-          const event = new CustomEvent(this.eventAccessTokenReceived, {detail: {accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin}, bubbles: true, composed: true});
-          this.dispatchEvent(event);
-        }, 2000);
+      console.log('init state called', this.arrHash[0], calling, this.flagRefresh);
+      if(!this.flagRefresh){
+        this.flagRefresh = true;
+        const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
+        const xhr : any= (await this.prepareXhr(null, "https://"+this.apiId+"/refresh", this._SfUserAuthLoader, authorization)) as any;
+        if(xhr.status == 200) {
+          const jsonRespose = JSON.parse(xhr.responseText);
+          console.log('jsonresponse', JSON.stringify(jsonRespose));
+          Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
+          Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
+          Util.writeCookie('email', jsonRespose.data.email.S);
+          Util.writeCookie('admin', jsonRespose.admin);
+          setTimeout(() => {
+            const event = new CustomEvent(this.eventAccessTokenReceived, {detail: {accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin}, bubbles: true, composed: true});
+            this.dispatchEvent(event);
+          }, 2000);
+        }
+        this.flagRefresh = false;
       } else {
-        this.signOut();
+        // this.signOut();
       }
 
     } 
@@ -1005,7 +1014,7 @@ export class SfUserAuth extends LitElement {
 
   fetchUserDetails = async (email: string) => {
     const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/detailuser", this._SfUserAuthLoader, authorization)) as any;
+    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+"/detailuser", this._SfUserAuthLoader, authorization)) as any;
     this._SfUserAuthLoader.innerHTML = '';
     if(xhr.status == 200) {
       const jsonRespose = JSON.parse(xhr.responseText);
@@ -1018,7 +1027,7 @@ export class SfUserAuth extends LitElement {
 
   fetchSignout = async (email: string) => {
     const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/logoutuser", this._SfUserAuthLoader, authorization)) as any;
+    const xhr : any = (await this.prepareXhr({"email": email}, "https://"+this.apiId+"/logoutuser", this._SfUserAuthLoader, authorization)) as any;
     //this._SfUserAuthLoader.innerHTML = '';
     if(xhr.status == 200) {
       this.setSuccess('Signout successful!')
@@ -1044,7 +1053,7 @@ export class SfUserAuth extends LitElement {
       }
       
       const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-      const xhr : any= (await this.prepareXhr(body, "https://"+this.apiId+".execute-api.us-east-1.amazonaws.com/test/listlogs", this._SfUserAuthLoader, authorization)) as any;
+      const xhr : any= (await this.prepareXhr(body, "https://"+this.apiId+"/listlogs", this._SfUserAuthLoader, authorization)) as any;
       this._SfUserAuthLoader.innerHTML = '';
       if(xhr.status == 200) {
         const jsonRespose = JSON.parse(xhr.responseText);
@@ -1065,7 +1074,7 @@ export class SfUserAuth extends LitElement {
     this.copySlots();
     this.decorateSlots();
     this.initListeners();
-    this.initState();
+    this.initState(1);
     window.onhashchange = () => { 
       const hashValue = window.location.hash;
       this.arrHash = hashValue.split("/").splice(1);
@@ -1137,10 +1146,23 @@ export class SfUserAuth extends LitElement {
 
   }
 
+  toggleMask() {
+    let input = this._SfUserAuthOtp;
+    let icon = this._SfUserAuthOtpToggle;
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "visibility_off";
+    } else {
+        input.type = "password";
+        icon.textContent = "visibility";
+    }
+  }
+
   override render() {
 
 
-    this.initState();
+    this.initState(2);
 
     if(this.arrHash == null || this.arrHash.length === 0) {
 
@@ -1232,7 +1254,8 @@ export class SfUserAuth extends LitElement {
               <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong></h4>
               <label part="label" for="otp">OTP</label><br />
               <div class="div-row">
-                <input part="input" id="otp" type="text" @keyup=${() => {this.onKeyUp('otp')}} placeholder="XXXX" autofocus/>
+                <input part="input" id="otp" type="password" @keyup=${() => {this.onKeyUp('otp')}} placeholder="XXXXXX" autofocus/>
+                <span id="otp-toggle" class="material-icons" @click=${this.toggleMask}>visibility</span>
                 <span id="error-client-otp" class="error-client material-icons">priority_high</span>
               </div>
               <div class="div-row-error div-row-submit">

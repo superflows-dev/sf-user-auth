@@ -20,6 +20,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.search = "";
         this.offset = 0;
         this.arrHash = window.location.hash.split("/").splice(1);
+        this.flagRefresh = false;
         this.signOut = () => {
             Util.clearCookie('refreshToken');
             Util.clearCookie('accessToken');
@@ -48,7 +49,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return false;
         };
         this.validateOtp = (otp) => {
-            if ((otp + "").length !== 4) {
+            if ((otp + "").length !== 6) {
                 return false;
             }
             return true;
@@ -138,7 +139,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.onResendSubmit = async () => {
             this.clearMessages();
-            const xhr = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/resend", this._SfUserAuthLoader, null));
+            const xhr = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://" + this.apiId + "/resend", this._SfUserAuthLoader, null));
             this._SfUserAuthLoader.innerHTML = '';
             if (xhr.status == 200) {
                 this.setSuccess('Verification email sent again successfully!');
@@ -151,7 +152,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.onFormSubmit = async () => {
             this.clearMessages();
             if (this.arrHash[0] == 'signup') {
-                const xhr = (await this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signup", this._SfUserAuthLoader, null));
+                const xhr = (await this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + "/signup", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     window.location.hash = '#auth/verify/' + this.email;
@@ -162,7 +163,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
             }
             else if (this.arrHash[0] == 'signin') {
-                const xhr = (await this.prepareXhr({ "email": this.email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/signin", this._SfUserAuthLoader, null));
+                const xhr = (await this.prepareXhr({ "email": this.email }, "https://" + this.apiId + "/signin", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     window.location.hash = '#auth/verify/' + this.email;
@@ -173,7 +174,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
             }
             else if (this.arrHash[0] == 'verify') {
-                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/verify", this._SfUserAuthLoader, null));
+                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://" + this.apiId + "/verify", this._SfUserAuthLoader, null));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     this.setSuccess('Verification successful!');
@@ -192,7 +193,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             else if (this.arrHash[0] == 'userdetails') {
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/updateuser", this._SfUserAuthLoader, authorization));
+                const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://" + this.apiId + "/updateuser", this._SfUserAuthLoader, authorization));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     this.setSuccess('Update successful!');
@@ -313,7 +314,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.copySlots = () => {
         };
-        this.initState = async () => {
+        this.initState = async (calling = 0) => {
             if (this.arrHash[0] == 'userdetails') {
                 // if(this._SfUserAuthEmail != null) {
                 //   console.log('not null');
@@ -330,22 +331,27 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 this.fetchSignout(this.arrHash[1]);
             }
             if (this.arrHash[0] == 'refresh') {
-                const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
-                const xhr = (await this.prepareXhr(null, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/refresh", this._SfUserAuthLoader, authorization));
-                if (xhr.status == 200) {
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    console.log('jsonresponse', JSON.stringify(jsonRespose));
-                    Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-                    Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
-                    Util.writeCookie('email', jsonRespose.data.email.S);
-                    Util.writeCookie('admin', jsonRespose.admin);
-                    setTimeout(() => {
-                        const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
-                        this.dispatchEvent(event);
-                    }, 2000);
+                console.log('init state called', this.arrHash[0], calling, this.flagRefresh);
+                if (!this.flagRefresh) {
+                    this.flagRefresh = true;
+                    const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
+                    const xhr = (await this.prepareXhr(null, "https://" + this.apiId + "/refresh", this._SfUserAuthLoader, authorization));
+                    if (xhr.status == 200) {
+                        const jsonRespose = JSON.parse(xhr.responseText);
+                        console.log('jsonresponse', JSON.stringify(jsonRespose));
+                        Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
+                        Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
+                        Util.writeCookie('email', jsonRespose.data.email.S);
+                        Util.writeCookie('admin', jsonRespose.admin);
+                        setTimeout(() => {
+                            const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
+                            this.dispatchEvent(event);
+                        }, 2000);
+                    }
+                    this.flagRefresh = false;
                 }
                 else {
-                    this.signOut();
+                    // this.signOut();
                 }
             }
             if (this.arrHash[0] == 'signout') {
@@ -366,7 +372,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.fetchUserDetails = async (email) => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-            const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/detailuser", this._SfUserAuthLoader, authorization));
+            const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + "/detailuser", this._SfUserAuthLoader, authorization));
             this._SfUserAuthLoader.innerHTML = '';
             if (xhr.status == 200) {
                 const jsonRespose = JSON.parse(xhr.responseText);
@@ -379,7 +385,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         };
         this.fetchSignout = async (email) => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-            const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/logoutuser", this._SfUserAuthLoader, authorization));
+            const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + "/logoutuser", this._SfUserAuthLoader, authorization));
             //this._SfUserAuthLoader.innerHTML = '';
             if (xhr.status == 200) {
                 this.setSuccess('Signout successful!');
@@ -402,7 +408,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     body = { "offset": offset + "", "limit": this.pageBlock + "", "filterKey": filterKey + "", "filterString": filterString };
                 }
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
-                const xhr = (await this.prepareXhr(body, "https://" + this.apiId + ".execute-api.us-east-1.amazonaws.com/test/listlogs", this._SfUserAuthLoader, authorization));
+                const xhr = (await this.prepareXhr(body, "https://" + this.apiId + "/listlogs", this._SfUserAuthLoader, authorization));
                 this._SfUserAuthLoader.innerHTML = '';
                 if (xhr.status == 200) {
                     const jsonRespose = JSON.parse(xhr.responseText);
@@ -419,7 +425,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.copySlots();
         this.decorateSlots();
         this.initListeners();
-        this.initState();
+        this.initState(1);
         window.onhashchange = () => {
             const hashValue = window.location.hash;
             this.arrHash = hashValue.split("/").splice(1);
@@ -478,8 +484,20 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         </div>
       `;
     }
+    toggleMask() {
+        let input = this._SfUserAuthOtp;
+        let icon = this._SfUserAuthOtpToggle;
+        if (input.type === "password") {
+            input.type = "text";
+            icon.textContent = "visibility_off";
+        }
+        else {
+            input.type = "password";
+            icon.textContent = "visibility";
+        }
+    }
     render() {
-        this.initState();
+        this.initState(2);
         if (this.arrHash == null || this.arrHash.length === 0) {
             return this.getUiRefresh();
         }
@@ -564,7 +582,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
               <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong></h4>
               <label part="label" for="otp">OTP</label><br />
               <div class="div-row">
-                <input part="input" id="otp" type="text" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXX" autofocus/>
+                <input part="input" id="otp" type="password" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXXXX" autofocus/>
+                <span id="otp-toggle" class="material-icons" @click=${this.toggleMask}>visibility</span>
                 <span id="error-client-otp" class="error-client material-icons">priority_high</span>
               </div>
               <div class="div-row-error div-row-submit">
@@ -1226,16 +1245,16 @@ __decorate([
     property()
 ], SfUserAuth.prototype, "search", void 0);
 __decorate([
-    property()
+    property({ type: Number })
 ], SfUserAuth.prototype, "offset", void 0);
 __decorate([
     property()
 ], SfUserAuth.prototype, "otp", void 0);
 __decorate([
-    property()
+    property({ type: Number })
 ], SfUserAuth.prototype, "pageBlock", void 0);
 __decorate([
-    property()
+    property({ type: Array })
 ], SfUserAuth.prototype, "arrHash", void 0);
 __decorate([
     query('#email')
@@ -1246,6 +1265,9 @@ __decorate([
 __decorate([
     query('#otp')
 ], SfUserAuth.prototype, "_SfUserAuthOtp", void 0);
+__decorate([
+    query('#otp-toggle')
+], SfUserAuth.prototype, "_SfUserAuthOtpToggle", void 0);
 __decorate([
     query('#search')
 ], SfUserAuth.prototype, "_SfUserAuthSearch", void 0);

@@ -22,6 +22,7 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthEmail: any;
     _SfUserAuthName: any;
     _SfUserAuthOtp: any;
+    _SfUserAuthOtpToggle: any;
     _SfUserAuthSearch: any;
     _SfUserAuthFilter: any;
     _SfUserAuthPrivacy: any;
@@ -46,6 +47,7 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthErrorOtp: any;
     _SfUserAuthTableContainer: any;
     _SfUserAuthPagesContainer: any;
+    flagRefresh: boolean;
     signOut: () => void;
     validateTerms: () => any;
     validatePrivacy: () => any;
@@ -69,7 +71,7 @@ export declare class SfUserAuth extends LitElement {
     onSearchClick: () => void;
     decorateSlots: () => void;
     copySlots: () => void;
-    initState: () => Promise<void>;
+    initState: (calling?: number) => Promise<void>;
     initListeners: () => void;
     fetchUserDetails: (email: string) => Promise<void>;
     fetchSignout: (email: string) => Promise<void>;
@@ -79,6 +81,7 @@ export declare class SfUserAuth extends LitElement {
     connectedCallback(): void;
     getUiRefresh(): import("lit-html").TemplateResult<1>;
     getUiSignIn(): import("lit-html").TemplateResult<1>;
+    toggleMask(): void;
     render(): import("lit-html").TemplateResult<1>;
 }
 declare global {
