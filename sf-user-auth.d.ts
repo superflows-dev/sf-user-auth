@@ -30,10 +30,13 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthAdmin: any;
     _SfUserAuthActive: any;
     _SfUserAuthReason: any;
+    _SfUserAuthBypassLabel: any;
+    _SfUserAuthBypassTimeLabel: any;
     _SfUserAuthLocked: any;
     _SfUserAuthUnlocked: any;
     _SfUserAuthLogs: any;
     _SfUserAuthSignout: any;
+    _SfUserAuthBypass: any;
     _SfUserAuthSubmit: any;
     _SfUserAuthSearchSubmit: any;
     _SfUserAuthSubmitCancel: any;
@@ -48,7 +51,7 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthTableContainer: any;
     _SfUserAuthPagesContainer: any;
     flagRefresh: boolean;
-    signOut: () => void;
+    signOut: () => Promise<void>;
     validateTerms: () => any;
     validatePrivacy: () => any;
     validateEmail: (email: string) => boolean;
@@ -75,6 +78,7 @@ export declare class SfUserAuth extends LitElement {
     initListeners: () => void;
     fetchUserDetails: (email: string) => Promise<void>;
     fetchSignout: (email: string) => Promise<void>;
+    fetchBypass: (email: string) => Promise<void>;
     fetchLogs: (offset: number, filterKey: string, filterString: string) => Promise<void>;
     constructor();
     protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;

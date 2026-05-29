@@ -597,7 +597,15 @@ export class SfUserAuth extends LitElement {
 
   flagRefresh: boolean = false;
 
-  signOut = () => {
+  signOut = async () => {
+    const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+    const xhr: any = (await this.prepareXhr({}, "https://" + this.apiId + "/signout", this._SfUserAuthLoader, authorization)) as any;
+    if (this._SfUserAuthLoader != null) {
+      this._SfUserAuthLoader.innerHTML = '';
+    }
+    if (xhr.status == 200) {
+      this.setSuccess('Signout successful!')
+    }
     Util.clearCookie('refreshToken');
     Util.clearCookie('accessToken');
     Util.clearCookie('email');
@@ -1030,7 +1038,7 @@ export class SfUserAuth extends LitElement {
     }
 
     if (this.arrHash[0] == 'signout') {
-      this.signOut();
+      await this.signOut();
     }
 
     if (this.arrHash[0] == 'signin') {
@@ -1064,7 +1072,7 @@ export class SfUserAuth extends LitElement {
       setTimeout(() => {
         this.insertUserDetailHTML(jsonRespose.data.values);
         this.onLocked();
-      },1000)
+      }, 1000)
     } else {
       window.location.href = '#auth/refresh';
     }
@@ -1084,7 +1092,7 @@ export class SfUserAuth extends LitElement {
       //this.insertUserDetailHTML(jsonRespose.data.values);
       //this.onLocked();
     } else {
-      this.signOut()
+      await this.signOut()
     }
   }
 
@@ -1102,7 +1110,7 @@ export class SfUserAuth extends LitElement {
       //this.insertUserDetailHTML(jsonRespose.data.values);
       //this.onLocked();
     } else {
-      this.signOut()
+      await this.signOut()
     }
   }
 
@@ -1126,7 +1134,7 @@ export class SfUserAuth extends LitElement {
         const jsonRespose = JSON.parse(xhr.responseText);
         this.insertLogsHTML(jsonRespose.data.values)
       } else {
-        this.signOut();
+        await this.signOut();
       }
     }
 

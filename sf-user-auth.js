@@ -21,7 +21,15 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.offset = 0;
         this.arrHash = window.location.hash.split("/").splice(1);
         this.flagRefresh = false;
-        this.signOut = () => {
+        this.signOut = async () => {
+            const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+            const xhr = (await this.prepareXhr({}, "https://" + this.apiId + "/signout", this._SfUserAuthLoader, authorization));
+            if (this._SfUserAuthLoader != null) {
+                this._SfUserAuthLoader.innerHTML = '';
+            }
+            if (xhr.status == 200) {
+                this.setSuccess('Signout successful!');
+            }
             Util.clearCookie('refreshToken');
             Util.clearCookie('accessToken');
             Util.clearCookie('email');
@@ -114,6 +122,22 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             else {
                 this.reason = "";
             }
+            if (data.bypasstime != null) {
+                let currTime = new Date().getTime();
+                if (parseInt(data.bypasstime) > currTime) {
+                    this._SfUserAuthBypassLabel.style.display = 'block';
+                    this._SfUserAuthBypassTimeLabel.style.display = 'block';
+                    this._SfUserAuthBypassTimeLabel.innerHTML = `${Util.getDateTimeStrings(parseInt(data.bypasstime))}`;
+                }
+                else {
+                    this._SfUserAuthBypassLabel.style.display = 'none';
+                    this._SfUserAuthBypassTimeLabel.style.display = 'none';
+                }
+            }
+            else {
+                this._SfUserAuthBypassLabel.style.display = 'none';
+                this._SfUserAuthBypassTimeLabel.style.display = 'none';
+            }
             if (data.admin != null) {
                 if (data.admin) {
                     this._SfUserAuthAdmin.setAttribute('checked', true);
@@ -140,7 +164,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.onResendSubmit = async () => {
             this.clearMessages();
             const xhr = (await this.prepareXhr({ "email": this.arrHash[1] }, "https://" + this.apiId + "/resend", this._SfUserAuthLoader, null));
-            this._SfUserAuthLoader.innerHTML = '';
+            if (this._SfUserAuthLoader != null) {
+                this._SfUserAuthLoader.innerHTML = '';
+            }
             if (xhr.status == 200) {
                 this.setSuccess('Verification email sent again successfully!');
             }
@@ -153,7 +179,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this.clearMessages();
             if (this.arrHash[0] == 'signup') {
                 const xhr = (await this.prepareXhr({ "name": this.name, "email": this.email }, "https://" + this.apiId + "/signup", this._SfUserAuthLoader, null));
-                this._SfUserAuthLoader.innerHTML = '';
+                if (this._SfUserAuthLoader != null) {
+                    this._SfUserAuthLoader.innerHTML = '';
+                }
                 if (xhr.status == 200) {
                     window.location.hash = '#auth/verify/' + this.email;
                 }
@@ -164,7 +192,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             else if (this.arrHash[0] == 'signin') {
                 const xhr = (await this.prepareXhr({ "email": this.email }, "https://" + this.apiId + "/signin", this._SfUserAuthLoader, null));
-                this._SfUserAuthLoader.innerHTML = '';
+                if (this._SfUserAuthLoader != null) {
+                    this._SfUserAuthLoader.innerHTML = '';
+                }
                 if (xhr.status == 200) {
                     window.location.hash = '#auth/verify/' + this.email;
                 }
@@ -175,7 +205,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             else if (this.arrHash[0] == 'verify') {
                 const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "otp": this.otp }, "https://" + this.apiId + "/verify", this._SfUserAuthLoader, null));
-                this._SfUserAuthLoader.innerHTML = '';
+                if (this._SfUserAuthLoader != null) {
+                    this._SfUserAuthLoader.innerHTML = '';
+                }
                 if (xhr.status == 200) {
                     this.setSuccess('Verification successful!');
                     const jsonRespose = JSON.parse(xhr.responseText);
@@ -194,7 +226,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             else if (this.arrHash[0] == 'userdetails') {
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
                 const xhr = (await this.prepareXhr({ "email": this.arrHash[1], "name": this.name, "reason": this.reason, "admin": this._SfUserAuthAdmin.checked, "suspended": !this._SfUserAuthActive.checked }, "https://" + this.apiId + "/updateuser", this._SfUserAuthLoader, authorization));
-                this._SfUserAuthLoader.innerHTML = '';
+                if (this._SfUserAuthLoader != null) {
+                    this._SfUserAuthLoader.innerHTML = '';
+                }
                 if (xhr.status == 200) {
                     this.setSuccess('Update successful!');
                 }
@@ -289,6 +323,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this._SfUserAuthReason.setAttribute('disabled', true);
             this._SfUserAuthSubmit.style.display = 'none';
             this._SfUserAuthSignout.style.display = 'block';
+            this._SfUserAuthBypass.style.display = 'block';
             this._SfUserAuthLogs.style.display = 'block';
         };
         this.onUnlocked = () => {
@@ -300,6 +335,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this._SfUserAuthReason.removeAttribute("disabled");
             this._SfUserAuthSubmit.style.display = 'block';
             this._SfUserAuthSignout.style.display = 'none';
+            this._SfUserAuthBypass.style.display = 'none';
             this._SfUserAuthLogs.style.display = 'none';
         };
         this.onCancelUserDetails = () => {
@@ -330,6 +366,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             if (this.arrHash[0] == 'usersignout') {
                 this.fetchSignout(this.arrHash[1]);
             }
+            if (this.arrHash[0] == 'userbypass') {
+                this.fetchBypass(this.arrHash[1]);
+            }
             if (this.arrHash[0] == 'refresh') {
                 console.log('init state called', this.arrHash[0], calling, this.flagRefresh);
                 if (!this.flagRefresh) {
@@ -355,7 +394,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
             }
             if (this.arrHash[0] == 'signout') {
-                this.signOut();
+                await this.signOut();
             }
             if (this.arrHash[0] == 'signin') {
                 setTimeout(() => {
@@ -373,11 +412,15 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.fetchUserDetails = async (email) => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
             const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + "/detailuser", this._SfUserAuthLoader, authorization));
-            this._SfUserAuthLoader.innerHTML = '';
+            if (this._SfUserAuthLoader != null) {
+                this._SfUserAuthLoader.innerHTML = '';
+            }
             if (xhr.status == 200) {
                 const jsonRespose = JSON.parse(xhr.responseText);
-                this.insertUserDetailHTML(jsonRespose.data.values);
-                this.onLocked();
+                setTimeout(() => {
+                    this.insertUserDetailHTML(jsonRespose.data.values);
+                    this.onLocked();
+                }, 1000);
             }
             else {
                 window.location.href = '#auth/refresh';
@@ -386,7 +429,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.fetchSignout = async (email) => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
             const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + "/logoutuser", this._SfUserAuthLoader, authorization));
-            //this._SfUserAuthLoader.innerHTML = '';
+            if (this._SfUserAuthLoader != null) {
+                this._SfUserAuthLoader.innerHTML = '';
+            }
             if (xhr.status == 200) {
                 this.setSuccess('Signout successful!');
                 setTimeout(() => {
@@ -396,7 +441,25 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 //this.onLocked();
             }
             else {
-                this.signOut();
+                await this.signOut();
+            }
+        };
+        this.fetchBypass = async (email) => {
+            const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
+            const xhr = (await this.prepareXhr({ "email": email }, "https://" + this.apiId + "/bypassuser", this._SfUserAuthLoader, authorization));
+            if (this._SfUserAuthLoader != null) {
+                this._SfUserAuthLoader.innerHTML = '';
+            }
+            if (xhr.status == 200) {
+                this.setSuccess('Bypass successful!');
+                setTimeout(() => {
+                    window.history.back();
+                }, 2000);
+                //this.insertUserDetailHTML(jsonRespose.data.values);
+                //this.onLocked();
+            }
+            else {
+                await this.signOut();
             }
         };
         this.fetchLogs = async (offset, filterKey, filterString) => {
@@ -409,13 +472,15 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
                 const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
                 const xhr = (await this.prepareXhr(body, "https://" + this.apiId + "/listlogs", this._SfUserAuthLoader, authorization));
-                this._SfUserAuthLoader.innerHTML = '';
+                if (this._SfUserAuthLoader != null) {
+                    this._SfUserAuthLoader.innerHTML = '';
+                }
                 if (xhr.status == 200) {
                     const jsonRespose = JSON.parse(xhr.responseText);
                     this.insertLogsHTML(jsonRespose.data.values);
                 }
                 else {
-                    this.signOut();
+                    await this.signOut();
                 }
             }
         };
@@ -736,7 +801,10 @@ let SfUserAuth = class SfUserAuth extends LitElement {
               <label for="active">Active</label>
               <input id="active" type="checkbox" class="checkbox" @change=${() => { this.onCheckedChange(); }}/>    
             </div>
-
+            <div class="div-row-userdetails-checkbox">
+              <div part="label" id="bypass-label">Bypass active until</div><br />
+              <div part="label" id="bypass-time-label"></div>
+            </div>
             <div class="div-row-error div-row-submit">
               <div part="errormsg" class="div-row-error-message"></div>
             </div>
@@ -749,6 +817,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
               <div class="actions-container">
                 <button part="buttonprimary" id="logs" class="edit-item" @click=${() => { window.location.href = '#auth/logs/email/' + this.arrHash[1] + '/0'; }}>View Logs</button>
                 <button part="buttonprimary" id="signout" class="edit-item" @click=${() => { window.location.href = '#auth/usersignout/' + this.arrHash[1]; }}>Sign Out</button>
+                <button part="buttonprimary" id="bypass" class="edit-item" @click=${() => { window.location.href = '#auth/userbypass/' + this.arrHash[1]; }}>Bypass</button>
                 <input part="submit" id="submit" class="details-submit" type="submit" value="Submit">
               </div>
             </div>
@@ -774,6 +843,41 @@ let SfUserAuth = class SfUserAuth extends LitElement {
               <br />
               <div class="stats-container">
                 <div>User ${this.arrHash[1]} is being signed out ...</div>
+              </div>
+              <div class="refresh-container">
+                <img .src=${this.logo} class="logo-refresh" />
+                <div class="lds-dual-ring-lg"></div>
+              </div>
+              <div class="div-row-error div-row-submit">
+                <div part="errormsg" class="div-row-error-message"></div>
+              </div>
+              <div class="div-row-success div-row-submit success-userdetails">
+                <div part="successmsg" class="div-row-success-message"></div>
+              </div>
+              <br />
+              <br />  
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+        }
+        else if (this.arrHash[0] == 'userbypass') {
+            return html `
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild">
+          <div class="search-container">
+            <div>
+              <div class="stats-container">
+                <h1 part="title">User Information</h1>
+              </div>
+              <div class="stats-container">
+                <div part="badge" class="badge">Admin</div>
+              </div>
+              <br />
+              <div class="stats-container">
+                <div>User ${this.arrHash[1]} is being bypassed ...</div>
               </div>
               <div class="refresh-container">
                 <img .src=${this.logo} class="logo-refresh" />
@@ -842,6 +946,7 @@ SfUserAuth.styles = css `
       display: none;
     }
 
+    #signout,
     #logs {
       margin-right: 10px;
     }
@@ -1290,6 +1395,12 @@ __decorate([
     query('#reason')
 ], SfUserAuth.prototype, "_SfUserAuthReason", void 0);
 __decorate([
+    query('#bypass-label')
+], SfUserAuth.prototype, "_SfUserAuthBypassLabel", void 0);
+__decorate([
+    query('#bypass-time-label')
+], SfUserAuth.prototype, "_SfUserAuthBypassTimeLabel", void 0);
+__decorate([
     query('#locked')
 ], SfUserAuth.prototype, "_SfUserAuthLocked", void 0);
 __decorate([
@@ -1301,6 +1412,9 @@ __decorate([
 __decorate([
     query('#signout')
 ], SfUserAuth.prototype, "_SfUserAuthSignout", void 0);
+__decorate([
+    query('#bypass')
+], SfUserAuth.prototype, "_SfUserAuthBypass", void 0);
 __decorate([
     query('#submit')
 ], SfUserAuth.prototype, "_SfUserAuthSubmit", void 0);

@@ -5,6 +5,7 @@ declare function callApi(url: string, data: string, authorization: any): Promise
 declare function goBack(): void;
 declare function goTo(path: string): void;
 declare function maskEmail(emailStr: string): string;
+declare function getDateTimeStrings(unixTimestamp: number): string;
 declare const exportFunctions: {
     writeCookie: typeof writeCookie;
     readCookie: typeof readCookie;
@@ -13,6 +14,7 @@ declare const exportFunctions: {
     goBack: typeof goBack;
     goTo: typeof goTo;
     maskEmail: typeof maskEmail;
+    getDateTimeStrings: typeof getDateTimeStrings;
 };
 export default exportFunctions;
 //# sourceMappingURL=util.d.ts.map
