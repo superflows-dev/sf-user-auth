@@ -597,6 +597,10 @@ export class SfUserAuth extends LitElement {
 
   flagRefresh: boolean = false;
 
+  domainRedirectList: any = {
+    'syntys': '#auth-sso/syntys'
+  }
+
   signOut = async () => {
     const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
     const xhr: any = (await this.prepareXhr({}, "https://" + this.apiId + "/signout", this._SfUserAuthLoader, authorization)) as any;
@@ -637,12 +641,9 @@ export class SfUserAuth extends LitElement {
     return false;
   }
 
-  validateOtp = (otp: string) => {
-    if ((otp + "").length !== 6) {
-      return false;
-    }
-    return true;
-  }
+  validateOtp = (otp: string): boolean => {
+    return /^\d{6}$/.test(otp);
+  };
 
   clearMessages = () => {
     this._SfUserAuthDivRowError.style.display = 'none';
@@ -766,8 +767,8 @@ export class SfUserAuth extends LitElement {
     if (xhr.status == 200) {
       this.setSuccess('Verification email sent again successfully!')
     } else {
-      const jsonRespose = JSON.parse(xhr.responseText);
-      this.setError(jsonRespose.error);
+      const jsonResponse = JSON.parse(xhr.responseText);
+      this.setError(jsonResponse.error);
     }
 
   }
@@ -785,8 +786,8 @@ export class SfUserAuth extends LitElement {
       if (xhr.status == 200) {
         window.location.hash = '#auth/verify/' + this.email;
       } else {
-        const jsonRespose = JSON.parse(xhr.responseText);
-        this.setError(jsonRespose.error);
+        const jsonResponse = JSON.parse(xhr.responseText);
+        this.setError(jsonResponse.error);
       }
 
     } else if (this.arrHash[0] == 'signin') {
@@ -796,10 +797,19 @@ export class SfUserAuth extends LitElement {
         this._SfUserAuthLoader.innerHTML = '';
       }
       if (xhr.status == 200) {
+        let jsonResponse = JSON.parse(xhr.responseText);
+        console.log('signin log', jsonResponse);
+        for (let key of Object.keys(this.domainRedirectList)) {
+          if (this.email.split('@')[1].indexOf(key) >= 0 && !jsonResponse.bypassed) {
+            Util.goTo(this.domainRedirectList[key]);
+            return;
+          }
+        }
         window.location.hash = '#auth/verify/' + this.email;
+
       } else {
-        const jsonRespose = JSON.parse(xhr.responseText);
-        this.setError(jsonRespose.error);
+        const jsonResponse = JSON.parse(xhr.responseText);
+        this.setError(jsonResponse.error);
       }
 
     } else if (this.arrHash[0] == 'verify') {
@@ -810,17 +820,17 @@ export class SfUserAuth extends LitElement {
       }
       if (xhr.status == 200) {
         this.setSuccess('Verification successful!')
-        const jsonRespose = JSON.parse(xhr.responseText);
-        console.log('verify log', jsonRespose);
-        const refreshToken = jsonRespose.data.refreshToken.token;
-        const email = jsonRespose.data.email.S;
+        const jsonResponse = JSON.parse(xhr.responseText);
+        console.log('verify log', jsonResponse);
+        const refreshToken = jsonResponse.data.refreshToken.token;
+        const email = jsonResponse.data.email.S;
         Util.writeCookie('refreshToken', refreshToken);
         Util.writeCookie('email', email);
         window.location.hash = '#auth/refresh/' + this.arrHash[1];
 
       } else {
-        const jsonRespose = JSON.parse(xhr.responseText);
-        this.setError(jsonRespose.error);
+        const jsonResponse = JSON.parse(xhr.responseText);
+        this.setError(jsonResponse.error);
       }
 
     } else if (this.arrHash[0] == 'userdetails') {
@@ -1019,14 +1029,14 @@ export class SfUserAuth extends LitElement {
         const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
         const xhr: any = (await this.prepareXhr(null, "https://" + this.apiId + "/refresh", this._SfUserAuthLoader, authorization)) as any;
         if (xhr.status == 200) {
-          const jsonRespose = JSON.parse(xhr.responseText);
-          console.log('jsonresponse', JSON.stringify(jsonRespose));
-          Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-          Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
-          Util.writeCookie('email', jsonRespose.data.email.S);
-          Util.writeCookie('admin', jsonRespose.admin);
+          const jsonResponse = JSON.parse(xhr.responseText);
+          console.log('jsonresponse', JSON.stringify(jsonResponse));
+          Util.writeCookie('refreshToken', jsonResponse.data.refreshToken.token);
+          Util.writeCookie('accessToken', jsonResponse.data.accessToken.token);
+          Util.writeCookie('email', jsonResponse.data.email.S);
+          Util.writeCookie('admin', jsonResponse.admin);
           setTimeout(() => {
-            const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
+            const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonResponse.data.accessToken, name: jsonResponse.data.name.S, email: jsonResponse.data.email.S, admin: jsonResponse.admin }, bubbles: true, composed: true });
             this.dispatchEvent(event);
           }, 2000);
         }
@@ -1068,9 +1078,9 @@ export class SfUserAuth extends LitElement {
       this._SfUserAuthLoader.innerHTML = '';
     }
     if (xhr.status == 200) {
-      const jsonRespose = JSON.parse(xhr.responseText);
+      const jsonResponse = JSON.parse(xhr.responseText);
       setTimeout(() => {
-        this.insertUserDetailHTML(jsonRespose.data.values);
+        this.insertUserDetailHTML(jsonResponse.data.values);
         this.onLocked();
       }, 1000)
     } else {
@@ -1089,7 +1099,7 @@ export class SfUserAuth extends LitElement {
       setTimeout(() => {
         window.history.back();
       }, 2000);
-      //this.insertUserDetailHTML(jsonRespose.data.values);
+      //this.insertUserDetailHTML(jsonResponse.data.values);
       //this.onLocked();
     } else {
       await this.signOut()
@@ -1107,7 +1117,7 @@ export class SfUserAuth extends LitElement {
       setTimeout(() => {
         window.history.back();
       }, 2000);
-      //this.insertUserDetailHTML(jsonRespose.data.values);
+      //this.insertUserDetailHTML(jsonResponse.data.values);
       //this.onLocked();
     } else {
       await this.signOut()
@@ -1131,8 +1141,8 @@ export class SfUserAuth extends LitElement {
         this._SfUserAuthLoader.innerHTML = '';
       }
       if (xhr.status == 200) {
-        const jsonRespose = JSON.parse(xhr.responseText);
-        this.insertLogsHTML(jsonRespose.data.values)
+        const jsonResponse = JSON.parse(xhr.responseText);
+        this.insertLogsHTML(jsonResponse.data.values)
       } else {
         await this.signOut();
       }
