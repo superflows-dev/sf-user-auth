@@ -51,6 +51,7 @@ export declare class SfUserAuth extends LitElement {
     _SfUserAuthTableContainer: any;
     _SfUserAuthPagesContainer: any;
     flagRefresh: boolean;
+    domainRedirectList: any;
     signOut: () => Promise<void>;
     validateTerms: () => any;
     validatePrivacy: () => any;
@@ -64,7 +65,7 @@ export declare class SfUserAuth extends LitElement {
     insertUserDetailHTML: (data: any) => void;
     prepareXhr: (data: any, url: string, loaderElement: any, authorization: any) => Promise<unknown>;
     onResendSubmit: () => Promise<void>;
-    onFormSubmit: () => Promise<boolean>;
+    onFormSubmit: () => Promise<false | undefined>;
     evalSubmit: () => void;
     onCheckedChange: () => void;
     onKeyUp: (location: string) => boolean;

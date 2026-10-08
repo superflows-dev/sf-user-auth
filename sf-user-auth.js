@@ -21,6 +21,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
         this.offset = 0;
         this.arrHash = window.location.hash.split("/").splice(1);
         this.flagRefresh = false;
+        this.domainRedirectList = {
+            'syntys': '#auth-sso/syntys'
+        };
         this.signOut = async () => {
             const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('accessToken'));
             const xhr = (await this.prepareXhr({}, "https://" + this.apiId + "/signout", this._SfUserAuthLoader, authorization));
@@ -45,7 +48,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return this._SfUserAuthPrivacy.checked;
         };
         this.validateEmail = (email) => {
-            if (email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+            if (email && email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
                 return true;
             }
             return false;
@@ -57,28 +60,37 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return false;
         };
         this.validateOtp = (otp) => {
-            if ((otp + "").length !== 6) {
-                return false;
-            }
-            return true;
+            return /^\d{6}$/.test(otp);
         };
         this.clearMessages = () => {
-            this._SfUserAuthDivRowError.style.display = 'none';
-            this._SfUserAuthDivRowErrorMessage.innerHTML = '';
-            this._SfUserAuthDivRowSuccess.style.display = 'none';
-            this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+            if (this._SfUserAuthDivRowError) {
+                this._SfUserAuthDivRowError.style.display = 'none';
+                this._SfUserAuthDivRowErrorMessage.innerHTML = '';
+            }
+            if (this._SfUserAuthDivRowSuccess) {
+                this._SfUserAuthDivRowSuccess.style.display = 'none';
+                this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+            }
         };
         this.setError = (msg) => {
-            this._SfUserAuthDivRowError.style.display = 'flex';
-            this._SfUserAuthDivRowErrorMessage.innerHTML = msg;
-            this._SfUserAuthDivRowSuccess.style.display = 'none';
-            this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+            if (this._SfUserAuthDivRowError) {
+                this._SfUserAuthDivRowError.style.display = 'flex';
+                this._SfUserAuthDivRowErrorMessage.innerHTML = msg;
+            }
+            if (this._SfUserAuthDivRowSuccess) {
+                this._SfUserAuthDivRowSuccess.style.display = 'none';
+                this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+            }
         };
         this.setSuccess = (msg) => {
-            this._SfUserAuthDivRowError.style.display = 'none';
-            this._SfUserAuthDivRowErrorMessage.innerHTML = '';
-            this._SfUserAuthDivRowSuccess.style.display = 'flex';
-            this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
+            if (this._SfUserAuthDivRowError) {
+                this._SfUserAuthDivRowError.style.display = 'none';
+                this._SfUserAuthDivRowErrorMessage.innerHTML = '';
+            }
+            if (this._SfUserAuthDivRowSuccess) {
+                this._SfUserAuthDivRowSuccess.style.display = 'flex';
+                this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
+            }
         };
         this.insertLogsHTML = (data) => {
             var htmlStr = `
@@ -171,8 +183,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 this.setSuccess('Verification email sent again successfully!');
             }
             else {
-                const jsonRespose = JSON.parse(xhr.responseText);
-                this.setError(jsonRespose.error);
+                const jsonResponse = JSON.parse(xhr.responseText);
+                this.setError(jsonResponse.error);
             }
         };
         this.onFormSubmit = async () => {
@@ -186,8 +198,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     window.location.hash = '#auth/verify/' + this.email;
                 }
                 else {
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    this.setError(jsonRespose.error);
+                    const jsonResponse = JSON.parse(xhr.responseText);
+                    this.setError(jsonResponse.error);
                 }
             }
             else if (this.arrHash[0] == 'signin') {
@@ -196,11 +208,19 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this._SfUserAuthLoader.innerHTML = '';
                 }
                 if (xhr.status == 200) {
+                    let jsonResponse = JSON.parse(xhr.responseText);
+                    console.log('signin log', jsonResponse);
+                    for (let key of Object.keys(this.domainRedirectList)) {
+                        if (this.email.split('@')[1].indexOf(key) >= 0 && !jsonResponse.bypassed) {
+                            Util.goTo(this.domainRedirectList[key]);
+                            return;
+                        }
+                    }
                     window.location.hash = '#auth/verify/' + this.email;
                 }
                 else {
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    this.setError(jsonRespose.error);
+                    const jsonResponse = JSON.parse(xhr.responseText);
+                    this.setError(jsonResponse.error);
                 }
             }
             else if (this.arrHash[0] == 'verify') {
@@ -210,17 +230,17 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 }
                 if (xhr.status == 200) {
                     this.setSuccess('Verification successful!');
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    console.log('verify log', jsonRespose);
-                    const refreshToken = jsonRespose.data.refreshToken.token;
-                    const email = jsonRespose.data.email.S;
+                    const jsonResponse = JSON.parse(xhr.responseText);
+                    console.log('verify log', jsonResponse);
+                    const refreshToken = jsonResponse.data.refreshToken.token;
+                    const email = jsonResponse.data.email.S;
                     Util.writeCookie('refreshToken', refreshToken);
                     Util.writeCookie('email', email);
                     window.location.hash = '#auth/refresh/' + this.arrHash[1];
                 }
                 else {
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    this.setError(jsonRespose.error);
+                    const jsonResponse = JSON.parse(xhr.responseText);
+                    this.setError(jsonResponse.error);
                 }
             }
             else if (this.arrHash[0] == 'userdetails') {
@@ -236,6 +256,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return false;
         };
         this.evalSubmit = () => {
+            if (!this._SfUserAuthSubmit)
+                return;
             if (this.arrHash[0] == 'signup') {
                 if (this.validateName(this._SfUserAuthName.value) && this.validateEmail(this._SfUserAuthEmail.value) && this.validateTerms() && this.validatePrivacy()) {
                     this._SfUserAuthSubmit.disabled = false;
@@ -376,14 +398,14 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     const authorization = btoa(Util.readCookie('email') + ":" + Util.readCookie('refreshToken'));
                     const xhr = (await this.prepareXhr(null, "https://" + this.apiId + "/refresh", this._SfUserAuthLoader, authorization));
                     if (xhr.status == 200) {
-                        const jsonRespose = JSON.parse(xhr.responseText);
-                        console.log('jsonresponse', JSON.stringify(jsonRespose));
-                        Util.writeCookie('refreshToken', jsonRespose.data.refreshToken.token);
-                        Util.writeCookie('accessToken', jsonRespose.data.accessToken.token);
-                        Util.writeCookie('email', jsonRespose.data.email.S);
-                        Util.writeCookie('admin', jsonRespose.admin);
+                        const jsonResponse = JSON.parse(xhr.responseText);
+                        console.log('jsonresponse', JSON.stringify(jsonResponse));
+                        Util.writeCookie('refreshToken', jsonResponse.data.refreshToken.token);
+                        Util.writeCookie('accessToken', jsonResponse.data.accessToken.token);
+                        Util.writeCookie('email', jsonResponse.data.email.S);
+                        Util.writeCookie('admin', jsonResponse.admin);
                         setTimeout(() => {
-                            const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonRespose.data.accessToken, name: jsonRespose.data.name.S, email: jsonRespose.data.email.S, admin: jsonRespose.admin }, bubbles: true, composed: true });
+                            const event = new CustomEvent(this.eventAccessTokenReceived, { detail: { accessToken: jsonResponse.data.accessToken, name: jsonResponse.data.name.S, email: jsonResponse.data.email.S, admin: jsonResponse.admin }, bubbles: true, composed: true });
                             this.dispatchEvent(event);
                         }, 2000);
                     }
@@ -398,12 +420,16 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             }
             if (this.arrHash[0] == 'signin') {
                 setTimeout(() => {
-                    this._SfUserAuthEmail.focus();
+                    if (this._SfUserAuthEmail) {
+                        this._SfUserAuthEmail.focus();
+                    }
                 }, 500);
             }
             if (this.arrHash[0] == 'verify') {
                 setTimeout(() => {
-                    this._SfUserAuthOtp.focus();
+                    if (this._SfUserAuthOtp) {
+                        this._SfUserAuthOtp.focus();
+                    }
                 }, 500);
             }
         };
@@ -416,9 +442,9 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 this._SfUserAuthLoader.innerHTML = '';
             }
             if (xhr.status == 200) {
-                const jsonRespose = JSON.parse(xhr.responseText);
+                const jsonResponse = JSON.parse(xhr.responseText);
                 setTimeout(() => {
-                    this.insertUserDetailHTML(jsonRespose.data.values);
+                    this.insertUserDetailHTML(jsonResponse.data.values);
                     this.onLocked();
                 }, 1000);
             }
@@ -437,7 +463,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 setTimeout(() => {
                     window.history.back();
                 }, 2000);
-                //this.insertUserDetailHTML(jsonRespose.data.values);
+                //this.insertUserDetailHTML(jsonResponse.data.values);
                 //this.onLocked();
             }
             else {
@@ -455,7 +481,7 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                 setTimeout(() => {
                     window.history.back();
                 }, 2000);
-                //this.insertUserDetailHTML(jsonRespose.data.values);
+                //this.insertUserDetailHTML(jsonResponse.data.values);
                 //this.onLocked();
             }
             else {
@@ -476,8 +502,8 @@ let SfUserAuth = class SfUserAuth extends LitElement {
                     this._SfUserAuthLoader.innerHTML = '';
                 }
                 if (xhr.status == 200) {
-                    const jsonRespose = JSON.parse(xhr.responseText);
-                    this.insertLogsHTML(jsonRespose.data.values);
+                    const jsonResponse = JSON.parse(xhr.responseText);
+                    this.insertLogsHTML(jsonResponse.data.values);
                 }
                 else {
                     await this.signOut();
@@ -496,10 +522,14 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             this.arrHash = hashValue.split("/").splice(1);
         };
         if (this.arrHash[0] == 'signin') {
-            this._SfUserAuthEmail.focus();
+            if (this._SfUserAuthEmail) {
+                this._SfUserAuthEmail.focus();
+            }
         }
         if (this.arrHash[0] == 'verify') {
-            this._SfUserAuthOtp.focus();
+            if (this._SfUserAuthOtp) {
+                this._SfUserAuthOtp.focus();
+            }
         }
     }
     connectedCallback() {
@@ -521,33 +551,44 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     getUiSignIn() {
         window.location.hash = '#auth/signin';
         return html `
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-        <div class="SfUserAuthC">
-          <div part="container" class="SfUserAuthCChild">
-            <h1 part="title">Sign In</h1>
-            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Hello again!</h4>
-              <label part="label" for="email">Email</label><br />
-              <div class="div-row">
-                <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email'); }} autofocus/>
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild auth-card-inner">
+          <h1 part="title" class="auth-card-title">Sign In</h1>
+          
+          <form class="auth-form" .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+            <div class="field-wrapper">
+              <label part="label" for="email" class="auth-label">Email</label>
+              <div class="input-container">
+                <img src="assets/vectors/email_icon.svg" class="field-icon" alt="" />
+                <input 
+                  part="input" 
+                  id="email" 
+                  type="text" 
+                  class="styled-auth-input"
+                  placeholder="Email" 
+                  @keyup=${() => { this.onKeyUp('email'); }} 
+                  autofocus
+                />
                 <span id="error-client-email" class="error-client material-icons">priority_high</span>
               </div>
-              <div class="div-row-error div-row-submit">
-                <div part="errormsg" class="div-row-error-message"></div>
-              </div>
-              <div class="div-row-success div-row-submit">
-                <div part="successmsg" class="div-row-success-message"></div>
-              </div>
-              <div class="div-row-submit">
-                <input part="submit" id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
-              </div>
-              <div class="div-row-terms">
-                <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
-              </div>
-            </form>
-          </div>
+            </div>
+
+            <div class="div-row-error div-row-submit">
+              <div part="errormsg" class="div-row-error-message"></div>
+            </div>
+            <div class="div-row-success div-row-submit">
+              <div part="successmsg" class="div-row-success-message"></div>
+            </div>
+
+            <div class="div-row-submit">
+              <input part="submit" id="submit" class="auth-submit-btn" type="submit" value="Submit" disabled>
+              <div class="loader-element"></div>
+            </div>
+          </form>
         </div>
-      `;
+      </div>
+    `;
     }
     toggleMask() {
         let input = this._SfUserAuthOtp;
@@ -641,27 +682,45 @@ let SfUserAuth = class SfUserAuth extends LitElement {
             return html `
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-          <div part="container" class="SfUserAuthCChild">
-            <h1 part="title">Verify</h1>
-            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong></h4>
-              <label part="label" for="otp">OTP</label><br />
-              <div class="div-row">
-                <input part="input" id="otp" type="password" @keyup=${() => { this.onKeyUp('otp'); }} placeholder="XXXXXX" autofocus/>
-                <span id="otp-toggle" class="material-icons" @click=${this.toggleMask}>visibility</span>
-                <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+          <div part="container" class="SfUserAuthCChild auth-card-inner">
+            <h1 part="title" class="auth-card-title">Verify</h1>
+            
+            <p class="verify-instruction-text">
+              Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong>
+            </p>
+
+            <form class="auth-form" .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <div class="field-wrapper">
+                <label part="label" for="otp" class="auth-label">OTP</label>
+                <div class="input-container">
+                  <input 
+                    part="input" 
+                    id="otp" 
+                    type="password" 
+                    class="styled-auth-input"
+                    placeholder="Enter OTP" 
+                    @keyup=${() => { this.onKeyUp('otp'); }} 
+                    autofocus
+                  />
+                  <span id="otp-toggle" class="material-icons toggle-visibility-icon" @click=${this.toggleMask}>visibility</span>
+                  <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+                </div>
               </div>
+
               <div class="div-row-error div-row-submit">
                 <div part="errormsg" class="div-row-error-message"></div>
               </div>
               <div class="div-row-success div-row-submit">
                 <div part="successmsg" class="div-row-success-message"></div>
               </div>
+
               <div class="div-row-submit">
-                <input part="submit" id="submit" type="submit" value="Verify" disabled><div class="loader-element"></div>
+                <input part="submit" id="submit" class="auth-submit-btn" type="submit" value="Verify" disabled>
+                <div class="loader-element"></div>
               </div>
-              <div class="div-row-terms">
-                <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
+
+              <div class="resend-container">
+                <span>I didn't receive the verification email. <span class="resend-link" .onclick=${this.onResendSubmit}>Resend</span></span>
               </div>
             </form>
           </div>
@@ -903,12 +962,23 @@ let SfUserAuth = class SfUserAuth extends LitElement {
     }
 };
 SfUserAuth.styles = css `
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
     
     .SfUserAuthC {
-      background-color: var(--auth-background-color, none);
+      background-color: var(--auth-background-color, transparent);
       color: var(--auth-color, inherit);
       display: flex;
       justify-content: center;
+      width: 100%;
     }
 
     .SfUserAuthCAdmin {
@@ -930,7 +1000,7 @@ SfUserAuth.styles = css `
     }
 
     .error-client {
-      color: red;
+      color: #e53e3e;
       display: none;
     }
 
@@ -963,9 +1033,8 @@ SfUserAuth.styles = css `
       display: flex;
       align-items: center;
       margin-top: 10px;
+      width: 100%;
     }
-
-    
 
     .div-row > label {
       width: 100px;
@@ -1005,12 +1074,12 @@ SfUserAuth.styles = css `
       align-items: center;
       margin-top: 20px;
       margin-bottom: 20px;
+      width: 100%;
     }
 
     .div-row-submit{
       justify-content: space-between;
     }
-
 
     .div-row-submit input {
       font-size: 110%;
@@ -1027,21 +1096,29 @@ SfUserAuth.styles = css `
 
     .div-row-error {
       display: none;
-      align-items:center;
+      align-items: center;
+      width: 100%;
+      margin-top: 12px;
+      margin-bottom: 12px;
     }
 
     .div-row-error-message {
-      color: red;
-      padding: 5px;
-      background-color: white;
-      border: dashed 1px red;
+      color: #991b1b;
+      padding: 8px 12px;
+      background-color: #fef2f2;
+      border: 1px solid #f87171;
+      border-radius: 6px;
       width: 100%;
       text-align: center;
+      font-size: 0.88rem;
     }
 
     .div-row-success {
       display: none;
-      align-items:center;
+      align-items: center;
+      width: 100%;
+      margin-top: 12px;
+      margin-bottom: 12px;
     }
 
     .success-userdetails {
@@ -1049,12 +1126,14 @@ SfUserAuth.styles = css `
     }
 
     .div-row-success-message {
-      color: green;
-      padding: 5px;
-      background-color: white;
-      border: dashed 1px green;
+      color: #065f46;
+      padding: 8px 12px;
+      background-color: #ecfdf5;
+      border: 1px solid #34d399;
+      border-radius: 6px;
       width: 100%;
       text-align: center;
+      font-size: 0.88rem;
     }
 
     .lds-dual-ring {
@@ -1150,7 +1229,6 @@ SfUserAuth.styles = css `
       align-items: center;
       flex-wrap: wrap;
     }
-
 
     .stats-item {
       margin: 10px;
@@ -1299,34 +1377,192 @@ SfUserAuth.styles = css `
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding-bottom: 30px;
+      width: 100%;
+    }
+
+    /* Target UI Redesign: Titles, Form Cards, Inputs, and Plum Buttons */
+    .auth-card-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: stretch;
+    }
+
+    .auth-card-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a0612;
+      text-align: center;
+      margin: 0 0 1.75rem 0;
+      letter-spacing: -0.01em;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .field-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1a0612;
+      margin-bottom: 0.45rem;
+      text-align: left;
+    }
+
+    .input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .styled-auth-input,
+    input[part="input"] {
+      width: 100% !important;
+      height: 44px;
+      padding: 10px 14px 10px 42px !important;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background-color: #f8fafc;
+      font-size: 0.95rem;
+      color: #1a0612;
+      box-sizing: border-box !important;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .styled-auth-input::placeholder,
+    input[part="input"]::placeholder {
+      color: #94a3b8;
+    }
+
+    .styled-auth-input:focus,
+    input[part="input"]:focus {
+      border-color: #a61c51;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(166, 28, 81, 0.12);
+    }
+
+    .toggle-visibility-icon {
+      position: absolute;
+      right: 12px;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 20px;
+      user-select: none;
+      z-index: 2;
+      transition: color 0.2s;
+    }
+
+    .toggle-visibility-icon:hover {
+      color: #1a0612;
+    }
+
+    .auth-submit-btn,
+    .div-row-submit input[type="submit"] {
+      width: 100% !important;
+      height: 48px;
+      background: linear-gradient(135deg, #7a123a 0%, #a61c51 100%) !important;
+      color: #ffffff !important;
+      font-size: 1rem !important;
+      font-weight: 600;
+      border: none !important;
+      border-radius: 8px !important;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(122, 18, 58, 0.28);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.5rem;
+      box-sizing: border-box;
+    }
+
+    .auth-submit-btn:hover:not([disabled]),
+    .div-row-submit input[type="submit"]:hover:not([disabled]) {
+      background: linear-gradient(135deg, #640e2f 0%, #8f1745 100%) !important;
+      box-shadow: 0 6px 18px rgba(122, 18, 58, 0.38);
+      transform: translateY(-1px);
+    }
+
+    .auth-submit-btn[disabled],
+    .div-row-submit input[type="submit"][disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .verify-instruction-text {
+      font-size: 0.92rem;
+      color: #4b5563;
+      line-height: 1.45;
+      margin: 0 0 1.5rem 0;
+      text-align: left;
+    }
+
+    .verify-instruction-text strong {
+      color: #111827;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .resend-container {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      color: #6b7280;
+    }
+
+    .resend-link {
+      color: #a61c51;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .resend-link:hover {
+      color: #7a123a;
     }
 
     @media (orientation: landscape) {
-
-     .SfUserAuthCChild {
-        width: 50%;
-      }
-
-      .SfUserAuthCChild form {
-        width: 40%;
-      }
-
-    }
-
-    @media (orientation: portrait) {
-
       .SfUserAuthCChild {
         width: 100%;
       }
-
       .SfUserAuthCChild form {
-        width: 80%;
+        width: 100%;
       }
-      
-
     }
 
+    @media (orientation: portrait) {
+      .SfUserAuthCChild {
+        width: 100%;
+      }
+      .SfUserAuthCChild form {
+        width: 100%;
+      }
+    }
   `;
 __decorate([
     property()

@@ -43,12 +43,23 @@ export class SfUserAuth extends LitElement {
   eventSignedOut = 'signedOut';
 
   static override styles = css`
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
     
     .SfUserAuthC {
       background-color: var(--auth-background-color, none);
       color: var(--auth-color, inherit);
       display: flex;
       justify-content: center;
+      width: 100%;
     }
 
     .SfUserAuthCAdmin {
@@ -71,7 +82,7 @@ export class SfUserAuth extends LitElement {
 
     .error-client {
       color: red;
-      display: none;
+      display: none !important;
     }
 
     .check-client {
@@ -103,9 +114,8 @@ export class SfUserAuth extends LitElement {
       display: flex;
       align-items: center;
       margin-top: 10px;
+      width: 100%;
     }
-
-    
 
     .div-row > label {
       width: 100px;
@@ -145,12 +155,12 @@ export class SfUserAuth extends LitElement {
       align-items: center;
       margin-top: 20px;
       margin-bottom: 20px;
+      width: 100%;
     }
 
     .div-row-submit{
       justify-content: space-between;
     }
-
 
     .div-row-submit input {
       font-size: 110%;
@@ -168,6 +178,7 @@ export class SfUserAuth extends LitElement {
     .div-row-error {
       display: none;
       align-items:center;
+      width: 100%;
     }
 
     .div-row-error-message {
@@ -182,6 +193,7 @@ export class SfUserAuth extends LitElement {
     .div-row-success {
       display: none;
       align-items:center;
+      width: 100%;
     }
 
     .success-userdetails {
@@ -290,7 +302,6 @@ export class SfUserAuth extends LitElement {
       align-items: center;
       flex-wrap: wrap;
     }
-
 
     .stats-item {
       margin: 10px;
@@ -439,34 +450,238 @@ export class SfUserAuth extends LitElement {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding-bottom: 30px;
+      width: 100%;
+    }
+
+    /* Target UI Redesign: Titles, Form Cards, Inputs, and Plum Buttons */
+    .auth-card-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: stretch;
+    }
+
+    .auth-card-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #1a0612;
+      text-align: center;
+      margin: 0 0 1.25rem 0;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .field-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1a0612;
+      margin-bottom: 0.45rem;
+      text-align: left;
+      letter-spacing: 0.01em;
+    }
+
+    .input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .input-container:focus-within .field-icon {
+      opacity: 0.85;
+      filter: drop-shadow(0 0 1px rgba(166, 28, 81, 0.4));
+    }
+
+    .styled-auth-input,
+    input[part="input"] {
+      width: 100% !important;
+      height: 46px;
+      padding: 10px 14px 10px 42px !important;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background-color: #f8fafc;
+      font-size: 0.95rem;
+      color: #1a0612;
+      box-sizing: border-box !important;
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* OTP input has padding on right for visibility toggle */
+    .styled-otp-input {
+      padding: 10px 44px 10px 14px !important;
+    }
+
+    .styled-auth-input::placeholder,
+    input[part="input"]::placeholder {
+      color: #94a3b8;
+    }
+
+    .styled-auth-input:hover:not(:focus),
+    input[part="input"]:hover:not(:focus) {
+      border-color: #cbd5e1;
+      background-color: #ffffff;
+    }
+
+    .styled-auth-input:focus,
+    input[part="input"]:focus {
+      border-color: #a61c51;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(166, 28, 81, 0.12);
+    }
+
+    .toggle-visibility-icon {
+      position: absolute;
+      right: 14px;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 22px;
+      user-select: none;
+      z-index: 2;
+      transition: color 0.2s ease, transform 0.15s ease;
+    }
+
+    .toggle-visibility-icon:hover {
+      color: #1a0612;
+    }
+
+    .toggle-visibility-icon:active {
+      transform: scale(0.92);
+    }
+
+    .auth-submit-btn,
+    .div-row-submit input[type="submit"] {
+      width: 100% !important;
+      height: 48px;
+      background: linear-gradient(135deg, #a61c51 0%, #7a123a 100%) !important;
+      color: #ffffff !important;
+      font-size: 1rem !important;
+      font-weight: 600;
+      border: none !important;
+      border-radius: 8px !important;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(122, 18, 58, 0.28);
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, filter 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.5rem;
+      box-sizing: border-box;
+    }
+
+    .auth-submit-btn:hover:not([disabled]),
+    .div-row-submit input[type="submit"]:hover:not([disabled]) {
+      background: linear-gradient(135deg, #8f1745 0%, #640e2f 100%) !important;
+      box-shadow: 0 6px 20px rgba(122, 18, 58, 0.38);
+      transform: translateY(-1px);
+    }
+
+    .auth-submit-btn:active:not([disabled]),
+    .div-row-submit input[type="submit"]:active:not([disabled]) {
+      transform: scale(0.985);
+      filter: brightness(0.95);
+      box-shadow: 0 2px 8px rgba(122, 18, 58, 0.3);
+    }
+
+    .auth-submit-btn[disabled],
+    .div-row-submit input[type="submit"][disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .bottom-switch-link {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      color: #4b5563;
+    }
+
+    .bottom-switch-link a {
+      color: #a61c51;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: color 0.15s ease;
+    }
+
+    .bottom-switch-link a:hover {
+      color: #7a123a;
+    }
+
+    /* Verification Subtitle Copy (Centered, Soft Gray) */
+    .verify-instruction-text {
+      font-size: 0.92rem;
+      color: #6b7280;
+      line-height: 1.5;
+      margin: 0 auto 1.75rem auto;
+      text-align: center;
+      max-width: 320px;
+    }
+
+    .resend-container {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      color: #4b5563;
+    }
+
+    .resend-link {
+      color: #a61c51;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: color 0.15s ease;
+    }
+
+    .resend-link:hover {
+      color: #7a123a;
     }
 
     @media (orientation: landscape) {
-
-     .SfUserAuthCChild {
-        width: 50%;
-      }
-
-      .SfUserAuthCChild form {
-        width: 40%;
-      }
-
-    }
-
-    @media (orientation: portrait) {
-
       .SfUserAuthCChild {
         width: 100%;
       }
-
       .SfUserAuthCChild form {
-        width: 80%;
+        width: 100%;
       }
-      
-
     }
 
+    @media (orientation: portrait) {
+      .SfUserAuthCChild {
+        width: 100%;
+      }
+      .SfUserAuthCChild form {
+        width: 100%;
+      }
+    }
   `;
 
   @property()
@@ -628,7 +843,7 @@ export class SfUserAuth extends LitElement {
   }
 
   validateEmail = (email: string) => {
-    if (email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+    if (email && email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
       return true;
     }
     return false;
@@ -646,25 +861,36 @@ export class SfUserAuth extends LitElement {
   };
 
   clearMessages = () => {
-    this._SfUserAuthDivRowError.style.display = 'none';
-    this._SfUserAuthDivRowErrorMessage.innerHTML = '';
-
-    this._SfUserAuthDivRowSuccess.style.display = 'none';
-    this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+    if (this._SfUserAuthDivRowError) {
+      this._SfUserAuthDivRowError.style.display = 'none';
+      this._SfUserAuthDivRowErrorMessage.innerHTML = '';
+    }
+    if (this._SfUserAuthDivRowSuccess) {
+      this._SfUserAuthDivRowSuccess.style.display = 'none';
+      this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+    }
   }
 
   setError = (msg: string) => {
-    this._SfUserAuthDivRowError.style.display = 'flex';
-    this._SfUserAuthDivRowErrorMessage.innerHTML = msg;
-    this._SfUserAuthDivRowSuccess.style.display = 'none';
-    this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+    if (this._SfUserAuthDivRowError) {
+      this._SfUserAuthDivRowError.style.display = 'flex';
+      this._SfUserAuthDivRowErrorMessage.innerHTML = msg;
+    }
+    if (this._SfUserAuthDivRowSuccess) {
+      this._SfUserAuthDivRowSuccess.style.display = 'none';
+      this._SfUserAuthDivRowSuccessMessage.innerHTML = '';
+    }
   }
 
   setSuccess = (msg: string) => {
-    this._SfUserAuthDivRowError.style.display = 'none';
-    this._SfUserAuthDivRowErrorMessage.innerHTML = '';
-    this._SfUserAuthDivRowSuccess.style.display = 'flex';
-    this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
+    if (this._SfUserAuthDivRowError) {
+      this._SfUserAuthDivRowError.style.display = 'none';
+      this._SfUserAuthDivRowErrorMessage.innerHTML = '';
+    }
+    if (this._SfUserAuthDivRowSuccess) {
+      this._SfUserAuthDivRowSuccess.style.display = 'flex';
+      this._SfUserAuthDivRowSuccessMessage.innerHTML = msg;
+    }
   }
 
   insertLogsHTML = (data: any) => {
@@ -849,6 +1075,8 @@ export class SfUserAuth extends LitElement {
   }
 
   evalSubmit = () => {
+
+    if (!this._SfUserAuthSubmit) return;
 
     if (this.arrHash[0] == 'signup') {
 
@@ -1053,14 +1281,18 @@ export class SfUserAuth extends LitElement {
 
     if (this.arrHash[0] == 'signin') {
       setTimeout(() => {
-        (this._SfUserAuthEmail as HTMLInputElement)!.focus();
+        if (this._SfUserAuthEmail) {
+          (this._SfUserAuthEmail as HTMLInputElement)!.focus();
+        }
       }, 500);
 
     }
 
     if (this.arrHash[0] == 'verify') {
       setTimeout(() => {
-        (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+        if (this._SfUserAuthOtp) {
+          (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+        }
       }, 500);
 
     }
@@ -1166,11 +1398,15 @@ export class SfUserAuth extends LitElement {
     }
 
     if (this.arrHash[0] == 'signin') {
-      (this._SfUserAuthEmail as HTMLInputElement).focus();
+      if (this._SfUserAuthEmail) {
+        (this._SfUserAuthEmail as HTMLInputElement).focus();
+      }
     }
 
     if (this.arrHash[0] == 'verify') {
-      (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+      if (this._SfUserAuthOtp) {
+        (this._SfUserAuthOtp as HTMLInputElement)!.focus();
+      }
     }
 
 
@@ -1201,33 +1437,48 @@ export class SfUserAuth extends LitElement {
     window.location.hash = '#auth/signin';
 
     return html`
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
-        <div class="SfUserAuthC">
-          <div part="container" class="SfUserAuthCChild">
-            <h1 part="title">Sign In</h1>
-            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Hello again!</h4>
-              <label part="label" for="email">Email</label><br />
-              <div class="div-row">
-                <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email') }} autofocus/>
+      <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+      <div class="SfUserAuthC">
+        <div part="container" class="SfUserAuthCChild auth-card-inner">
+          <h1 part="title" class="auth-card-title">Sign In</h1>
+          
+          <form class="auth-form" .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+            <div class="field-wrapper">
+              <label part="label" for="email" class="auth-label">Email</label>
+              <div class="input-container">
+                <img src="assets/vectors/email_icon.svg" class="field-icon" alt="" />
+                <input 
+                  part="input" 
+                  id="email" 
+                  type="text" 
+                  class="styled-auth-input"
+                  placeholder="Enter your email" 
+                  @keyup=${() => { this.onKeyUp('email'); }} 
+                  autofocus
+                />
                 <span id="error-client-email" class="error-client material-icons">priority_high</span>
               </div>
-              <div class="div-row-error div-row-submit">
-                <div part="errormsg" class="div-row-error-message"></div>
-              </div>
-              <div class="div-row-success div-row-submit">
-                <div part="successmsg" class="div-row-success-message"></div>
-              </div>
-              <div class="div-row-submit">
-                <input part="submit" id="submit" type="submit" value="Submit" disabled><div class="loader-element"></div>
-              </div>
-              <div class="div-row-terms">
-                <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
-              </div>
-            </form>
-          </div>
+            </div>
+
+            <div class="div-row-error div-row-submit">
+              <div part="errormsg" class="div-row-error-message"></div>
+            </div>
+            <div class="div-row-success div-row-submit">
+              <div part="successmsg" class="div-row-success-message"></div>
+            </div>
+
+            <div class="div-row-submit">
+              <input part="submit" id="submit" class="auth-submit-btn" type="submit" value="Submit" disabled>
+              <div class="loader-element"></div>
+            </div>
+
+            <div class="bottom-switch-link">
+              <span>I don't have an account. <a href="#auth/signup">Sign Up</a></span>
+            </div>
+          </form>
         </div>
-      `;
+      </div>
+    `;
 
   }
 
@@ -1333,27 +1584,45 @@ export class SfUserAuth extends LitElement {
       return html`
         <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>  
         <div class="SfUserAuthC">
-          <div part="container" class="SfUserAuthCChild">
-            <h1 part="title">Verify</h1>
-            <form .onsubmit=${() => { this.onFormSubmit(); return false; }}>
-              <h4 part="subtitle">Verification email with a one-time-password (OTP) has been sent to <strong>${Util.maskEmail(this.arrHash[1])}</strong></h4>
-              <label part="label" for="otp">OTP</label><br />
-              <div class="div-row">
-                <input part="input" id="otp" type="password" @keyup=${() => { this.onKeyUp('otp') }} placeholder="XXXXXX" autofocus/>
-                <span id="otp-toggle" class="material-icons" @click=${this.toggleMask}>visibility</span>
-                <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+          <div part="container" class="SfUserAuthCChild auth-card-inner">
+            <h1 part="title" class="auth-card-title">Verify</h1>
+            
+            <p class="verify-instruction-text">
+              Verification email with a one-time-password (OTP) has been sent to ${Util.maskEmail(this.arrHash[1])}
+            </p>
+
+            <form class="auth-form" .onsubmit=${() => { this.onFormSubmit(); return false; }}>
+              <div class="field-wrapper">
+                <label part="label" for="otp" class="auth-label">OTP</label>
+                <div class="input-container">
+                  <input 
+                    part="input" 
+                    id="otp" 
+                    type="password" 
+                    class="styled-auth-input styled-otp-input"
+                    placeholder="Enter OTP" 
+                    @keyup=${() => { this.onKeyUp('otp'); }} 
+                    autofocus
+                  />
+                  <span id="otp-toggle" class="material-icons toggle-visibility-icon" @click=${this.toggleMask}>visibility</span>
+                  <span id="error-client-otp" class="error-client material-icons">priority_high</span>
+                </div>
               </div>
+
               <div class="div-row-error div-row-submit">
                 <div part="errormsg" class="div-row-error-message"></div>
               </div>
               <div class="div-row-success div-row-submit">
                 <div part="successmsg" class="div-row-success-message"></div>
               </div>
+
               <div class="div-row-submit">
-                <input part="submit" id="submit" type="submit" value="Verify" disabled><div class="loader-element"></div>
+                <input part="submit" id="submit" class="auth-submit-btn" type="submit" value="Verify" disabled>
+                <div class="loader-element"></div>
               </div>
-              <div class="div-row-terms">
-                <span>I didn't receive the verification email. <span class="link resend" .onclick=${this.onResendSubmit}>Resend</span></span>
+
+              <div class="resend-container">
+                <span>I didn't receive the verification email. <span class="resend-link" .onclick=${this.onResendSubmit}>Resend</span></span>
               </div>
             </form>
           </div>
