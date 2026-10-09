@@ -1450,7 +1450,7 @@ export class SfUserAuth extends LitElement {
                 <input 
                   part="input" 
                   id="email" 
-                  type="text" 
+                  type="email" 
                   class="styled-auth-input"
                   placeholder="Enter your email" 
                   @keyup=${() => { this.onKeyUp('email'); }} 
@@ -1521,7 +1521,7 @@ export class SfUserAuth extends LitElement {
               <br />
               <label part="label" for="email">Email</label><br />
               <div class="div-row">
-                <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email') }} autofocus/>
+                <input part="input" id="email" type="email" @keyup=${() => { this.onKeyUp('email') }} autofocus/>
                 <span id="error-client-email" class="error-client material-icons">priority_high</span>
               </div>
               <br />
@@ -1744,7 +1744,7 @@ export class SfUserAuth extends LitElement {
             <br />
             <label part="label" for="email">Email</label><br />
             <div class="div-row">
-              <input part="input" id="email" type="text" @keyup=${() => { this.onKeyUp('email') }}>
+              <input part="input" id="email" type="email" @keyup=${() => { this.onKeyUp('email') }}>
               <span id="error-client-name" class="error-client material-icons">priority_high</span>
             </div>
             <br />
