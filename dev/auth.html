@@ -17,37 +17,78 @@
   </head>
   <body>
 
-    <br /><br />
-    <div class="logo-container">
-        <a href="index.html"><img src="https://superflows-images.s3.ap-south-1.amazonaws.com/superflows_black_transparent_200.png" /></a>
-    </div>
+    <!-- MAIN MIDDLE SECTION ONLY -->
+    <main class="auth-main-wrapper">
+      
+      <!-- Background Vectors Layer -->
+      <div class="auth-bg-layer" aria-hidden="true">
+        <img src="assets/vectors/04_left_triangle_primary.svg" class="vector-left-glow" alt="" />
+        <img src="assets/vectors/01_right_triangle_primary.svg" class="vector-right-shapes" alt="" />
+      </div>
 
-    <div class="auth">
-      <!-- <sf-user-auth id="sf_auth" appName="FlaggGRC" apiId="dnytrdlrmxgsy.cloudfront.net" logo="https://flagggrc-images.s3.amazonaws.com/logo.png" mode="admin"> -->
-      <sf-user-auth id="sf_auth" appName="FlaggGRC" apiId="api2.flagggrc.tech/auth" logo="https://flagggrc-images.s3.amazonaws.com/logo.png" mode="admin">
-      <!-- <sf-user-auth id="sf_auth" appName="FlaggGRC" apiId="3.213.147.150:3000" logo="https://flagggrc-images.s3.amazonaws.com/logo.png" mode="admin"> -->
-      <!-- <sf-user-auth id="sf_auth" appName="FlaggGRC" apiId="dwqyez2puoxmu.cloudfront.net/auth" logo="https://flagggrc-images.s3.amazonaws.com/logo.png" mode="admin"> -->
-          <div slot="privacy">
-              <h1>Privacy</h1>
-              <p>Privacy policy goes here
+      <!-- Main Stage Container -->
+      <div class="auth-stage-container">
+        
+        <!-- Left Hero Copy (Sign In Screen) -->
+        <section class="auth-hero-content">
+          <div class="hero-top-block">
+            <span class="accent-bar"></span>
+            <h1 class="hero-heading">Nothing falls<br />through the cracks</h1>
+            <p class="hero-subtext">Governance, risk and compliance<br />made accessible and achievable.</p>
+            <p class="hero-tagline">Simple. Intuitive. Integrated.<br />One-stop and Done.</p>
           </div>
-          <div slot="terms">
-              <h1>Terms</h1>
-              <p>Terms & Conditions go here
+
+          <div class="hero-bottom-block">
+            <span class="accent-bar"></span>
+            <p class="hero-motto">Become Attentive By Default</p>
           </div>
-      </sf-user-auth>
-    </div>
+        </section>
+
+        <!-- Right / Center Authentication Card Slot -->
+        <section class="auth-card-wrapper">
+          <div class="auth-card">
+            <sf-user-auth id="sf_auth" appName="FlaggGRC" apiId="api2.flagggrc.tech/auth" logo="" mode="admin">
+              <div slot="privacy">
+                <h1>Privacy</h1>
+                <p>Privacy policy goes here</p>
+              </div>
+              <div slot="terms">
+                <h1>Terms</h1>
+                <p>Terms & Conditions go here</p>
+              </div>
+            </sf-user-auth>
+          </div>
+        </section>
+
+      </div>
+    </main>
 
     <script>
+      document.getElementsByTagName('sf-user-auth')[0].addEventListener('accessTokenReceived', (e) => {
+        window.location.href = 'index.html';
+      });
+      document.getElementsByTagName('sf-user-auth')[0].addEventListener('signedOut', (e) => {
+        window.location.href = "auth.html#auth/signin";
+      });
+    </script>
+
+    <script>
+      function syncAuthMode() {
+        if (window.location.hash.startsWith('#auth/verify')) {
+          document.body.classList.add('mode-verify');
+        } else {
+          document.body.classList.remove('mode-verify');
+        }
+      }
+      window.addEventListener('hashchange', syncAuthMode);
+      syncAuthMode();
 
       document.getElementsByTagName('sf-user-auth')[0].addEventListener('accessTokenReceived', (e) => {
-          window.location.href='index.html';
-
-      })
+        window.location.href = 'index.html';
+      });
       document.getElementsByTagName('sf-user-auth')[0].addEventListener('signedOut', (e) => {
-          window.location.href="auth.html#auth/signin";
-      })
-
+        window.location.href = "auth.html#auth/signin";
+      });
     </script>
   </body>
 </html>

@@ -1,25 +1,297 @@
+* {
+  box-sizing: border-box;
+}
 
 body {
-    background-color: #efefef;
-    margin: 0px;
-    font-family: 'Source Sans Pro';
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #ffffff;
+  color: #1a0612;
+  overflow-x: hidden;
 }
 
-.ui-container {
-
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: center;
-
+.auth-main-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #ffffff;
+  padding: 40px 32px;
 }
 
-.logo-container {
-    display: flex;
-    align-items: center;
+/* Background Artwork Layer */
+.auth-bg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Left angled triangle (desktop) */
+.vector-left-glow {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 28vw;
+  max-width: 420px;
+  opacity: 0.9;
+}
+
+/* Right angled triangle */
+.vector-right-shapes {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48vw;
+  max-width: 660px;
+  opacity: 0.95;
+}
+
+/* 2-Column Stage */
+.auth-stage-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1140px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+/* Left Hero Typography (Desktop) */
+.auth-hero-content {
+  flex: 1;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 380px;
+}
+
+.hero-top-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.accent-bar {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background-color: #a61c51;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.hero-heading {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #1a0612;
+  margin: 0 0 16px 0;
+}
+
+.hero-subtext {
+  font-size: 1.05rem;
+  color: #4b4b4b;
+  line-height: 1.45;
+  margin: 0 0 24px 0;
+}
+
+.hero-tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a61c51;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.hero-bottom-block {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-motto {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a0612;
+  margin: 0;
+}
+
+/* Center / Right Auth Card */
+.auth-card-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card {
+  background: #ffffff;
+  border-radius: 20px;
+  /* Deeper multi-layer shadow with richer plum and ambient tones */
+  box-shadow: 
+    0 12px 30px -4px rgba(0, 0, 0, 0.08),
+    0 24px 54px -6px rgba(122, 18, 58, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  z-index: 2;
+}
+
+/* OTP / Verify Mode (Desktop) */
+body.mode-verify .auth-hero-content {
+  display: none !important;
+}
+
+body.mode-verify .auth-stage-container {
+  justify-content: center !important;
+  max-width: 500px;
+}
+
+body.mode-verify .auth-card-wrapper {
+  width: 100%;
+}
+
+/* Mobile-Specific Layout (max-width: 768px) - Matching Reference Exact Spacing */
+@media (max-width: 768px) {
+  .auth-main-wrapper {
+    /* Generous top clearance for the mobile navbar */
+    padding: 84px 24px 48px;
+    align-items: flex-start !important;
     justify-content: center;
-}
+    min-height: 100vh;
+  }
 
-.logo-container img {
-    height: 80px;
+  .auth-stage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .auth-hero-content {
+    display: contents;
+  }
+
+  /* Top Hero */
+  .hero-top-block {
+    order: 1;
+    text-align: left;
+    align-items: flex-start;
+    margin-bottom: 34px;
+    padding: 0 4px;
+  }
+
+  .accent-bar {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 16px;
+    width: 28px;
+    height: 3px;
+  }
+
+  .hero-heading {
+    font-size: 2.15rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .hero-subtext {
+    font-size: 0.96rem;
+    color: #4b4b4b;
+    line-height: 1.45;
+    margin-bottom: 0;
+  }
+
+  .hero-tagline {
+    display: none;
+  }
+
+  /* Middle Auth Card */
+  .auth-card-wrapper {
+    order: 2;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .auth-card {
+    padding: 34px 24px 28px;
+    border-radius: 18px;
+    /* Richer, darker drop shadow on mobile */
+    box-shadow: 
+      0 10px 24px -3px rgba(0, 0, 0, 0.08),
+      0 22px 48px -5px rgba(122, 18, 58, 0.17),
+      0 2px 6px rgba(0, 0, 0, 0.05);
+    max-width: 100%;
+  }
+
+  /* Bottom Motto */
+  .hero-bottom-block {
+    order: 3;
+    text-align: left;
+    align-items: flex-start;
+    margin-top: 0;
+    padding: 0 4px;
+  }
+
+  .hero-bottom-block .accent-bar {
+    margin-bottom: 10px;
+  }
+
+  .hero-motto {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1a0612;
+  }
+
+  /* OTP Mode on Mobile: Anchored to exact vertical slot */
+  body.mode-verify .hero-top-block,
+  body.mode-verify .hero-bottom-block,
+  body.mode-verify .auth-hero-content {
+    display: none !important;
+  }
+
+  body.mode-verify .auth-stage-container {
+    padding-top: 170px;
+  }
+
+  body.mode-verify .auth-card-wrapper {
+    margin-bottom: 0;
+  }
+
+  /* Background Vectors (Mobile) */
+  .vector-left-glow {
+    position: absolute;
+    top: auto;
+    bottom: -30px;
+    left: -40px;
+    width: 58vw;
+    max-width: 270px;
+    opacity: 0.5;
+    filter: blur(20px);
+  }
+
+  .vector-right-shapes {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 78vw;
+    max-width: 330px;
+    height: auto;
+    opacity: 0.95;
+    object-position: top right;
+  }
 }
