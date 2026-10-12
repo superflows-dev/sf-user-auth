@@ -1076,8 +1076,6 @@ export class SfUserAuth extends LitElement {
 
   evalSubmit = () => {
 
-    if (!this._SfUserAuthSubmit) return;
-
     if (this.arrHash[0] == 'signup') {
 
       if (this.validateName(this._SfUserAuthName.value) && this.validateEmail(this._SfUserAuthEmail.value) && this.validateTerms() && this.validatePrivacy()) {
@@ -1103,7 +1101,6 @@ export class SfUserAuth extends LitElement {
       }
 
     } else if (this.arrHash[0] == 'admin') {
-
       if (this.validateEmail(this._SfUserAuthSearch.value)) {
         this._SfUserAuthSearchSubmit.disabled = false;
       } else {
@@ -1121,7 +1118,7 @@ export class SfUserAuth extends LitElement {
   }
 
   onKeyUp = (location: string) => {
-
+    
     switch (location) {
 
       case 'name':
